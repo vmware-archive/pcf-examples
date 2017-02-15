@@ -1,0 +1,8 @@
+---
+name: my-service
+
+dependencies:
+  - go
+
+files:
+  - my-service/**/*

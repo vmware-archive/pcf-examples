@@ -1,0 +1,9 @@
+---
+name: my-service-job
+templates:
+  ctl.sh.erb: bin/ctl.sh
+
+packages:
+  - my-service
+
+properties: {}

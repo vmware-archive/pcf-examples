@@ -4,11 +4,11 @@ import (
 	"net/http"
 	"fmt"
 	"io/ioutil"
+	"os"
 )
 
 func main() {
-	// todo: parse from yaml
-	port := "8000"
+	port := os.Getenv("PORT")
 
 	http.HandleFunc("/", handler)
 

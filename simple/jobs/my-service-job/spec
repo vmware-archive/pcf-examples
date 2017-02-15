@@ -6,4 +6,8 @@ templates:
 packages:
   - my-service
 
-properties: {}
+properties:
+  simple:
+    port:
+      description: Port service runs on
+      default: 8000

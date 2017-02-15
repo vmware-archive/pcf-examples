@@ -14,7 +14,7 @@ case $1 in
     mkdir -p ${RUN_DIR} ${LOG_DIR}
     chown -R vcap:vcap ${RUN_DIR} ${LOG_DIR}
 
-#    exec chpst -u vcap:vcap ${PACKAGE_DIR}/bin/my-service
+    export PORT=<%= p("simple.port", "8000") %>
 
     exec chpst -u vcap:vcap ${PACKAGE_DIR}/bin/my-service \
       >>  $LOG_DIR/my-service.stdout.log \

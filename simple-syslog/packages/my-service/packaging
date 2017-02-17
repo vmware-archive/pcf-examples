@@ -1,0 +1,16 @@
+# abort script on any command that exits with a non zero value
+set -e
+
+echo "Debugging package contents"
+ls -lahR
+
+echo "Setting up Golang"
+export GOROOT=$(readlink -nf /var/vcap/packages/go)
+export PATH=$GOROOT/bin:$PATH
+
+echo "Compliling source"
+export GOPATH=$BOSH_INSTALL_TARGET
+mkdir -p $GOPATH/src
+cp -r my-service $GOPATH/src
+
+go install my-service

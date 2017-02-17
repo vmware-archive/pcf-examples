@@ -53,5 +53,11 @@ bosh upload release
 bosh deployment manifests/lite.yml
 
 # Iterate...
-bosh create release --force && bosh upload release && yes yes | bosh deploy --recreate
+bosh create release --force && bosh upload release && yes yes | bosh deploy --recreate  --no-redact
 ```
+
+
+```bash
+nc -w0 -u logs5.papertrailapp.com 25705  <<< "logging from remote"
+```
+

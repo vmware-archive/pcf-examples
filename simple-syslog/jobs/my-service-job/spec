@@ -1,0 +1,13 @@
+---
+name: my-service-job
+templates:
+  ctl.sh.erb: bin/ctl.sh
+
+packages:
+  - my-service
+
+properties:
+  simple:
+    port:
+      description: Port service runs on
+      default: 8000

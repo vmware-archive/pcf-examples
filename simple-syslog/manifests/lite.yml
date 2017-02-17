@@ -1,0 +1,43 @@
+---
+name: example-simple-syslog
+director_uuid: fb70f16a-4d6f-41f8-bc2e-0181a03dff18
+
+releases:
+- name: example-simple-syslog
+  version: latest
+- name: syslog
+  version: latest
+
+stemcells:
+- alias: trusty
+  os: ubuntu-trusty
+  version: latest
+
+instance_groups:
+- name: service-instance
+  instances: 1
+  vm_type: m3.medium
+  stemcell: trusty
+  azs:
+    - z1
+  networks:
+    - name: private
+  jobs:
+  - name: my-service-job
+    release: example-simple-syslog
+    properties: {}
+  - name: syslog_forwarder
+    release: syslog
+    properties:
+      syslog:
+        address: logs5.papertrailapp.com
+        port: 256256
+        forward_files: true
+        transport: udp
+
+update:
+  canaries: 1
+  max_in_flight: 1
+  serial: false
+  canary_watch_time: 1000-60000
+  update_watch_time: 1000-60000

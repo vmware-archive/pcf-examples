@@ -1,0 +1,7 @@
+# abort script on any command that exits with a non zero value
+set -e
+
+cp go/go-version.txt ${BOSH_INSTALL_TARGET}
+
+tar xzf go/go-linux-amd64.tar.gz
+cp -R go/* ${BOSH_INSTALL_TARGET}

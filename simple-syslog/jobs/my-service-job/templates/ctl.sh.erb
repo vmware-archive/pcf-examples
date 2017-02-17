@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+set -e
+
+# todo: not really using RUN_DIR...?
+RUN_DIR=/var/vcap/sys/run/my-service
+LOG_DIR=/var/vcap/sys/log/my-service
+JOB_DIR=/var/vcap/jobs/my-service-job
+PACKAGE_DIR=${JOB_DIR}/packages/my-service
+
+case $1 in
+
+  start)
+    mkdir -p ${RUN_DIR} ${LOG_DIR}
+    chown -R vcap:vcap ${RUN_DIR} ${LOG_DIR}
+
+    export PORT=<%= p("simple.port", "8000") %>
+
+    exec chpst -u vcap:vcap ${PACKAGE_DIR}/bin/my-service \
+      >>  $LOG_DIR/my-service.stdout.log \
+      2>> $LOG_DIR/my-service.stderr.log
+
+    ;;
+
+  stop)
+    killall my-service
+
+    ;;
+
+  *)
+    echo "Usage: ctl.sh {start|stop}" ;;
+
+esac

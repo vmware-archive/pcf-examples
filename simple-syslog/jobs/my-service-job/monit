@@ -1,0 +1,5 @@
+check process my-service
+  matching "my-service"
+  start program "/var/vcap/jobs/my-service-job/bin/ctl.sh start"
+  stop program "/var/vcap/jobs/my-service-job/bin/ctl.sh stop"
+  group vcap

@@ -1,0 +1,37 @@
+package config_test
+
+import (
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
+
+	. "my-service/config"
+
+	"os"
+)
+
+var _ = Describe("Config", func() {
+	Context("config parsing", func() {
+		BeforeEach(func() {
+			os.Clearenv()
+		})
+
+		It("parses config from environment", func() {
+			os.Setenv("ADMIN_USERNAME", "bob")
+			os.Setenv("ADMIN_PASSWORD", "abc123")
+			os.Setenv("PORT", "9001")
+
+			c, err := Parse()
+			Expect(err).To(BeNil())
+			Expect(c.AdminUsername).To(Equal("bob"))
+			Expect(c.AdminPassword).To(Equal("abc123"))
+			Expect(c.Port).To(Equal(9001))
+		})
+
+		It("check for required password", func() {
+			_, err := Parse()
+			Expect(err).NotTo(BeNil())
+		})
+
+	})
+
+})

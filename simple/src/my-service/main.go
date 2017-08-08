@@ -1,34 +1,32 @@
 package main
 
 import (
-	"net/http"
+	"my-service/config"
+	"github.com/julienschmidt/httprouter"
+	"syscall"
 	"fmt"
-	"io/ioutil"
-	"os"
+	"net/http"
+	"my-service/api"
+	"my-service/db"
 )
 
 func main() {
-	port := os.Getenv("PORT")
-
-	http.HandleFunc("/", handler)
-
-	println(fmt.Sprintf("Listing on %v", port))
-	http.ListenAndServe(fmt.Sprintf(":%s", port), nil)
-}
-
-func handler(response http.ResponseWriter, request *http.Request) {
-	bodyBytes, err := ioutil.ReadAll(request.Body)
+	c, err := config.Parse()
 	if err != nil {
-		println("Error reading request", err)
-		return
+		println(fmt.Sprintf("%v", err))
+		syscall.Exit(1)
 	}
 
-	requestBody := string(bodyBytes)
-	responseBody := "    No incoming request body!"
-	if requestBody != "" {
-		responseBody = requestBody
-	} else {
-		response.WriteHeader(422)
+	mydb := db.NewDB()
+	client := api.NewClientAPI(mydb)
+
+	router := httprouter.New()
+	router.GET("/api/:bucket_name/:key", client.GetKeyHandler)
+	router.PUT("/api/:bucket_name/:key", client.PutKeyHandler)
+	err = http.ListenAndServe(fmt.Sprintf(":%v", c.Port), router)
+
+	if err != nil {
+		println(fmt.Sprintf("%v", err))
+		syscall.Exit(1)
 	}
-	response.Write([]byte(fmt.Sprintf("Echo server given:\n%v\n", responseBody)))
 }

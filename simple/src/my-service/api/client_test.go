@@ -1,14 +1,15 @@
 package api_test
 
 import (
+	"net/http"
+	"net/http/httptest"
+
+	"github.com/julienschmidt/httprouter"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	"github.com/julienschmidt/httprouter"
 	. "my-service/api"
 	"my-service/db"
-	"net/http"
-	"net/http/httptest"
 )
 
 var _ = Describe("Client", func() {

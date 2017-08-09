@@ -1,11 +1,11 @@
 package api
 
 import (
+	"fmt"
+	"github.com/julienschmidt/httprouter"
+	"io/ioutil"
 	"my-service/db"
 	"net/http"
-	"github.com/julienschmidt/httprouter"
-	"fmt"
-	"io/ioutil"
 )
 
 type ClientAPI interface {
@@ -25,7 +25,7 @@ func NewClientAPI(store db.KVStore) ClientAPI {
 
 func (client *clientAPI) GetKeyHandler(response http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	key := params.ByName("key")
-	bucketName:= params.ByName("bucket_name")
+	bucketName := params.ByName("bucket_name")
 	println(fmt.Sprintf("bucket: %v", bucketName))
 	println(fmt.Sprintf("key: %v", key))
 	value := client.store.Get(bucketName, key)
@@ -37,10 +37,10 @@ func (client *clientAPI) GetKeyHandler(response http.ResponseWriter, request *ht
 
 func (client *clientAPI) PutKeyHandler(response http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	key := params.ByName("key")
-	bucketName:= params.ByName("bucket_name")
+	bucketName := params.ByName("bucket_name")
 	println(fmt.Sprintf("bucket: %v", bucketName))
 	println(fmt.Sprintf("key: %v", key))
 	data, _ := ioutil.ReadAll(request.Body)
-	client.store.Put( bucketName, key, string(data))
+	client.store.Put(bucketName, key, string(data))
 
 }

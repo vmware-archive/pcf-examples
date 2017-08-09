@@ -7,7 +7,7 @@ import (
 type config struct {
 	AdminUsername string `envconfig:"admin_username" default:"admin"`
 	AdminPassword string `envconfig:"admin_password" required:"true"`
-	Port int `envconfig:"port" default:"9000"`
+	Port          int    `envconfig:"port" default:"9000"`
 }
 
 func Parse() (*config, error) {

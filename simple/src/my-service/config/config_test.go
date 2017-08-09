@@ -1,12 +1,12 @@
 package config_test
 
 import (
+	"os"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
 	. "my-service/config"
-
-	"os"
 )
 
 var _ = Describe("Config", func() {

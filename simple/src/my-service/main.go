@@ -1,12 +1,14 @@
 package main
 
 import (
-	"my-service/config"
-	"github.com/julienschmidt/httprouter"
-	"syscall"
 	"fmt"
 	"net/http"
+	"syscall"
+
+	"github.com/julienschmidt/httprouter"
+
 	"my-service/api"
+	"my-service/config"
 	"my-service/db"
 )
 

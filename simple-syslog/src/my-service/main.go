@@ -1,9 +1,9 @@
 package main
 
 import (
-	"net/http"
 	"fmt"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"time"
 )

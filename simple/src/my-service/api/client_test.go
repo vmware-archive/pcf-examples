@@ -45,7 +45,23 @@ var _ = Describe("Client", func() {
 			Expect(givenBucketName).To(Equal("myfirstbucket"))
 			Expect(givenKey).To(Equal("mykey"))
 		})
+		It("input validation failed", func() {
+			mydb := &dbfakes.FakeKVStore{}
 
+			myRequest := &http.Request{}
+			myResponse := httptest.NewRecorder()
+			myParams := httprouter.Params{
+				{Key: "bucket_name", Value: ""},
+				{Key: "key", Value: ""},
+			}
+
+			client := NewClientAPI(mydb)
+			client.GetKeyHandler(myResponse, myRequest, myParams)
+
+			Expect(myResponse.Code).To(Equal(400))
+			Expect(mydb.GetCallCount()).To(Equal(0))
+
+		})
 		It("key not found", func() {
 			mydb.GetReturns(nil, nil)
 			myRequest := &http.Request{}
@@ -58,6 +74,19 @@ var _ = Describe("Client", func() {
 			client := NewClientAPI(mydb)
 			client.GetKeyHandler(myResponse, myRequest, myParams)
 			Expect(myResponse.Code).To(Equal(404))
+		})
+		It("get throws error", func() {
+			mydb.GetReturns(nil, errors.New("something bad happen disk is corrupted"))
+			myRequest := &http.Request{}
+			myResponse := httptest.NewRecorder()
+			myParams := httprouter.Params{
+				{Key: "bucket_name", Value: "myfirstbucket"},
+				{Key: "key", Value: "mykey"},
+			}
+
+			client := NewClientAPI(mydb)
+			client.GetKeyHandler(myResponse, myRequest, myParams)
+			Expect(myResponse.Code).To(Equal(500))
 		})
 	})
 
@@ -86,6 +115,22 @@ var _ = Describe("Client", func() {
 			Expect(givenValue).To(Equal([]byte("my new value")))
 
 		})
+		It("input validation failed", func() {
+			mydb := &dbfakes.FakeKVStore{}
+			myRequest := &http.Request{}
+			myResponse := httptest.NewRecorder()
+			myParams := httprouter.Params{
+				{Key: "bucket_name", Value: ""},
+				{Key: "key", Value: ""},
+			}
+
+			client := NewClientAPI(mydb)
+			client.PutKeyHandler(myResponse, myRequest, myParams)
+
+			Expect(myResponse.Code).To(Equal(400))
+			Expect(mydb.PutCallCount()).To(Equal(0))
+
+		})
 
 		It("body is garbage", func() {
 			data := ioutil.NopCloser(&ErrorReader{})
@@ -104,6 +149,24 @@ var _ = Describe("Client", func() {
 			client.PutKeyHandler(myResponse, myRequest, myParams)
 			Expect(myResponse.Code).To(Equal(400))
 			Expect(mydb.PutCallCount()).To(Equal(0))
+		})
+
+		It("put throws error", func() {
+			mydb.PutReturns(errors.New("something bad happen disk is corrupted"))
+			data := ioutil.NopCloser(strings.NewReader("my new value"))
+
+			myRequest := &http.Request{
+				Body: data,
+			}
+			myResponse := httptest.NewRecorder()
+			myParams := httprouter.Params{
+				{Key: "bucket_name", Value: "myfirstbucket"},
+				{Key: "key", Value: "mykey"},
+			}
+
+			client := NewClientAPI(mydb)
+			client.PutKeyHandler(myResponse, myRequest, myParams)
+			Expect(myResponse.Code).To(Equal(500))
 		})
 	})
 })

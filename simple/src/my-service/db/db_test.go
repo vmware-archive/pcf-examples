@@ -62,4 +62,21 @@ var _ = Describe("Db", func() {
 
 		Expect(err).NotTo(BeNil())
 	})
+
+	It("creats funky named bucket", func() {
+		err := db.CreateBucket("∴_///3asdfa33332:::")
+
+		Expect(err).To(BeNil())
+
+		err = db.CreateBucket(" ")
+
+		Expect(err).To(BeNil())
+	})
+
+	It("create bucket is idempotent", func() {
+		err := db.CreateBucket("foo")
+		Expect(err).To(BeNil())
+		err = db.CreateBucket("foo")
+		Expect(err).To(BeNil())
+	})
 })

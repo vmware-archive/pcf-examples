@@ -21,13 +21,16 @@ func main() {
 
 	//todo: make path configurable
 	mydb, err := db.NewDB("my.db")
-	client := api.NewClientAPI(mydb)
 	if err != nil {
 		println(fmt.Sprintf("%v", err))
 		syscall.Exit(1)
 	}
+	client := api.NewClientAPI(mydb)
+	admin := api.NewAdminAPI(mydb)
 
 	router := httprouter.New()
+	router.POST("/api/bucket/:bucket_name", admin.CreateBucketHandler)
+	router.DELETE("/api/bucket/:bucket_name", admin.DeleteBucketHandler)
 	router.GET("/api/bucket/:bucket_name/:key", client.GetKeyHandler)
 	router.PUT("/api/bucket/:bucket_name/:key", client.PutKeyHandler)
 	err = http.ListenAndServe(fmt.Sprintf(":%v", c.Port), router)

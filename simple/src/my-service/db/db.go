@@ -13,6 +13,7 @@ type KVStore interface {
 	io.Closer
 
 	CreateBucket(bucketName string) error
+	DeleteBucket(bucketName string) error
 	Put(bucketName string, key string, value []byte) error
 	Get(bucketName string, key string) ([]byte, error)
 }
@@ -33,7 +34,14 @@ func NewDB(filename string) (KVStore, error) {
 
 func (db *kvStore) CreateBucket(bucketName string) error {
 	return db.boltdb.Update(func(tx *bolt.Tx) error {
-		_, err := tx.CreateBucket([]byte(bucketName))
+		_, err := tx.CreateBucketIfNotExists([]byte(bucketName))
+		return err
+	})
+}
+
+func (db *kvStore) DeleteBucket(bucketName string) error {
+	return db.boltdb.Update(func(tx *bolt.Tx) error {
+		err := tx.DeleteBucket([]byte(bucketName))
 		return err
 	})
 }

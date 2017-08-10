@@ -16,10 +16,32 @@ func NewAdminAPI(store db.KVStore) *AdminAPI {
 	}
 }
 
-func (client *AdminAPI) CreateBucketHandler(response http.ResponseWriter, request *http.Request, params httprouter.Params) {
+func (admin *AdminAPI) CreateBucketHandler(response http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	//todo: auth check
+	//todo: input validation. bucket name empyty, etc
+
+	//create credentials...?
+
+	bucketName := params.ByName("bucket_name")
+	if bucketName == "" {
+		response.WriteHeader(400)
+		return
+	}
+	err := admin.store.CreateBucket(bucketName)
+	if err != nil {
+		response.WriteHeader(500)
+	}
 }
 
-func (client *AdminAPI) DeleteBucketHandler(response http.ResponseWriter, request *http.Request, params httprouter.Params) {
+func (admin *AdminAPI) DeleteBucketHandler(response http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	//todo: auth check
+	bucketName := params.ByName("bucket_name")
+	if bucketName == "" {
+		response.WriteHeader(400)
+		return
+	}
+	err := admin.store.DeleteBucket(bucketName)
+	if err != nil {
+		response.WriteHeader(500)
+	}
 }

@@ -21,10 +21,17 @@ func (client *ClientAPI) GetKeyHandler(response http.ResponseWriter, request *ht
 	//todo: auth check
 	key := params.ByName("key")
 	bucketName := params.ByName("bucket_name")
-	//todo: handle Get error
-	value, _ := client.store.Get(bucketName, key)
-	if value == nil {
+	if bucketName == "" || key == "" {
+		response.WriteHeader(400)
+		return
+	}
+	value, err := client.store.Get(bucketName, key)
+	if err != nil {
+		response.WriteHeader(500)
+		return
+	} else if value == nil {
 		response.WriteHeader(404)
+		return
 	} else {
 		response.Write(value)
 	}
@@ -34,11 +41,19 @@ func (client *ClientAPI) PutKeyHandler(response http.ResponseWriter, request *ht
 	//todo: auth check
 	key := params.ByName("key")
 	bucketName := params.ByName("bucket_name")
+	if bucketName == "" || key == "" {
+		response.WriteHeader(400)
+		return
+	}
 	data, err := ioutil.ReadAll(request.Body)
 	if err != nil {
 		response.WriteHeader(400)
+		return
 	} else {
-		//todo: handle Put error
-		client.store.Put(bucketName, key, data)
+		err := client.store.Put(bucketName, key, data)
+		if err != nil {
+			response.WriteHeader(500)
+			return
+		}
 	}
 }

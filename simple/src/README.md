@@ -26,3 +26,34 @@ todo: come up with clever name
 * API for admin (used by SB)
     * create bucket instance
     * create bucket creds...?
+
+### dev
+#### Setup
+Install dependencies
+```
+go get github.com/onsi/ginkgo/ginkgo
+go get github.com/onsi/gomega
+go get github.com/maxbrunsfeld/counterfeiter
+go get github.com/kardianos/govendor
+```
+
+Add bosh release to `GOPATH`, from BOSH-release root run 
+```bash
+export GOPATH=$GOPATH:`pwd`
+```
+
+#### build
+```bash
+go generate ./...
+go build main.go
+```
+
+#### Test
+```bash
+go generate ./...
+go vet ./...
+ginkgo -r -failOnPending -race
+```
+
+#### Dependency vendoring
+todo

@@ -7,22 +7,17 @@ import (
 	"net/http"
 )
 
-type ClientAPI interface {
-	GetKeyHandler(response http.ResponseWriter, request *http.Request, ps httprouter.Params)
-	PutKeyHandler(response http.ResponseWriter, request *http.Request, ps httprouter.Params)
-}
-
-type clientAPI struct {
+type ClientAPI struct {
 	store db.KVStore
 }
 
-func NewClientAPI(store db.KVStore) ClientAPI {
-	return &clientAPI{
+func NewClientAPI(store db.KVStore) *ClientAPI {
+	return &ClientAPI{
 		store: store,
 	}
 }
 
-func (client *clientAPI) GetKeyHandler(response http.ResponseWriter, request *http.Request, params httprouter.Params) {
+func (client *ClientAPI) GetKeyHandler(response http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	//todo: auth check
 	key := params.ByName("key")
 	bucketName := params.ByName("bucket_name")
@@ -35,7 +30,7 @@ func (client *clientAPI) GetKeyHandler(response http.ResponseWriter, request *ht
 	}
 }
 
-func (client *clientAPI) PutKeyHandler(response http.ResponseWriter, request *http.Request, params httprouter.Params) {
+func (client *ClientAPI) PutKeyHandler(response http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	//todo: auth check
 	key := params.ByName("key")
 	bucketName := params.ByName("bucket_name")

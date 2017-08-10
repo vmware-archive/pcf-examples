@@ -16,7 +16,6 @@ import (
 )
 
 var _ = Describe("Client", func() {
-
 	var mydb db.KVStore
 
 	BeforeEach(func() {

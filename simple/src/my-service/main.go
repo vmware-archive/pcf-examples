@@ -28,8 +28,8 @@ func main() {
 	}
 
 	router := httprouter.New()
-	router.GET("/api/:bucket_name/:key", client.GetKeyHandler)
-	router.PUT("/api/:bucket_name/:key", client.PutKeyHandler)
+	router.GET("/api/bucket/:bucket_name/:key", client.GetKeyHandler)
+	router.PUT("/api/bucket/:bucket_name/:key", client.PutKeyHandler)
 	err = http.ListenAndServe(fmt.Sprintf(":%v", c.Port), router)
 
 	if err != nil {

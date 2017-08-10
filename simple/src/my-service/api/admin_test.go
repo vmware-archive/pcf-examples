@@ -8,16 +8,14 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	. "my-service/api"
-	"my-service/db"
+	"my-service/db/dbfakes"
 )
 
-var _ = Describe("Client", func() {
-	var mydb db.KVStore
+var _ = Describe("Admin", func() {
+	var mydb *dbfakes.FakeKVStore
 
 	BeforeEach(func() {
-		mydb = &memoryDb{
-			data: map[string]map[string][]byte{},
-		}
+		mydb = new(dbfakes.FakeKVStore)
 	})
 
 	Context("CreateBucketHandler", func() {
@@ -33,7 +31,8 @@ var _ = Describe("Client", func() {
 			client.CreateBucketHandler(myResponse, myRequest, myParams)
 			Expect(myResponse.Code).To(Equal(200))
 
-			//todo: check bucket created
+			Expect(mydb.CreateBucketCallCount()).To(Equal(1))
+			Expect(mydb.CreateBucketArgsForCall(0)).To(Equal("my_new_bucket"))
 		})
 	})
 })

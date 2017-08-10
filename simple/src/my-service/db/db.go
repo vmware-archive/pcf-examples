@@ -7,6 +7,8 @@ import (
 	"github.com/boltdb/bolt"
 )
 
+//go:generate counterfeiter ./ KVStore
+
 type KVStore interface {
 	io.Closer
 

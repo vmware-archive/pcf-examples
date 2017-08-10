@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"github.com/julienschmidt/httprouter"
 	"io/ioutil"
 	"my-service/db"
@@ -24,23 +23,27 @@ func NewClientAPI(store db.KVStore) ClientAPI {
 }
 
 func (client *clientAPI) GetKeyHandler(response http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	//todo: auth check
 	key := params.ByName("key")
 	bucketName := params.ByName("bucket_name")
-	println(fmt.Sprintf("bucket: %v", bucketName))
-	println(fmt.Sprintf("key: %v", key))
-	value := client.store.Get(bucketName, key)
-	println(fmt.Sprintf("value: %v", value))
-	// todo: json, probably
-	serialized := fmt.Sprintf("%v", value)
-	response.Write([]byte(string(serialized)))
+	//todo: handle Get error
+	value, _ := client.store.Get(bucketName, key)
+	if value == nil {
+		response.WriteHeader(404)
+	} else {
+		response.Write(value)
+	}
 }
 
 func (client *clientAPI) PutKeyHandler(response http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	//todo: auth check
 	key := params.ByName("key")
 	bucketName := params.ByName("bucket_name")
-	println(fmt.Sprintf("bucket: %v", bucketName))
-	println(fmt.Sprintf("key: %v", key))
-	data, _ := ioutil.ReadAll(request.Body)
-	client.store.Put(bucketName, key, string(data))
-
+	data, err := ioutil.ReadAll(request.Body)
+	if err != nil {
+		response.WriteHeader(400)
+	} else {
+		//todo: handle Put error
+		client.store.Put(bucketName, key, data)
+	}
 }

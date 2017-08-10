@@ -1,29 +1,65 @@
 package db
 
+import (
+	"errors"
+	"io"
+
+	"github.com/boltdb/bolt"
+)
+
 type KVStore interface {
-	Put(bucketName string, key string, value interface{})
-	Get(bucketName string, key string) interface{}
+	io.Closer
+
+	CreateBucket(bucketName string) error
+	Put(bucketName string, key string, value []byte) error
+	Get(bucketName string, key string) ([]byte, error)
 }
 
-type memoryDb struct {
-	data map[string]map[string]interface{}
+type kvStore struct {
+	boltdb *bolt.DB
 }
 
-func NewDB() KVStore {
-	return &memoryDb{
-		data: map[string]map[string]interface{}{},
+func NewDB(filename string) (KVStore, error) {
+	db, err := bolt.Open(filename, 0600, nil)
+	if err != nil {
+		return nil, err
 	}
+	return &kvStore{
+		boltdb: db,
+	}, nil
 }
 
-func (db *memoryDb) Put(bucketName string, key string, value interface{}) {
-	bucket, ok := db.data[bucketName]
-	if !ok {
-		bucket = make(map[string]interface{})
-		db.data[bucketName] = bucket
-	}
-	bucket[key] = value
+func (db *kvStore) CreateBucket(bucketName string) error {
+	return db.boltdb.Update(func(tx *bolt.Tx) error {
+		_, err := tx.CreateBucket([]byte(bucketName))
+		return err
+	})
 }
 
-func (db *memoryDb) Get(bucketName string, key string) interface{} {
-	return db.data[bucketName][key]
+func (db *kvStore) Put(bucketName string, key string, value []byte) error {
+	return db.boltdb.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte(bucketName))
+		if b == nil {
+			return errors.New("Bucket does not exist")
+		}
+		err := b.Put([]byte(key), value)
+		return err
+	})
+}
+
+func (db *kvStore) Get(bucketName string, key string) ([]byte, error) {
+	var value []byte
+	err := db.boltdb.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte(bucketName))
+		if b == nil {
+			return errors.New("Bucket does not exist")
+		}
+		value = b.Get([]byte(key))
+		return nil
+	})
+	return value, err
+}
+
+func (db *kvStore) Close() error {
+	return db.boltdb.Close()
 }

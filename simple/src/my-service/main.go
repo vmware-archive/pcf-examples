@@ -19,8 +19,13 @@ func main() {
 		syscall.Exit(1)
 	}
 
-	mydb := db.NewDB()
+	//todo: make path configurable
+	mydb, err := db.NewDB("my.db")
 	client := api.NewClientAPI(mydb)
+	if err != nil {
+		println(fmt.Sprintf("%v", err))
+		syscall.Exit(1)
+	}
 
 	router := httprouter.New()
 	router.GET("/api/:bucket_name/:key", client.GetKeyHandler)

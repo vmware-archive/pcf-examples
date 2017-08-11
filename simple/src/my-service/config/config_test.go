@@ -19,19 +19,19 @@ var _ = Describe("Config", func() {
 			os.Setenv("ADMIN_USERNAME", "bob")
 			os.Setenv("ADMIN_PASSWORD", "abc123")
 			os.Setenv("PORT", "9001")
+			os.Setenv("DB_FILE", "custom.db")
 
 			c, err := Parse()
 			Expect(err).To(BeNil())
 			Expect(c.AdminUsername).To(Equal("bob"))
 			Expect(c.AdminPassword).To(Equal("abc123"))
 			Expect(c.Port).To(Equal(9001))
+			Expect(c.DBFile).To(Equal("custom.db"))
 		})
 
 		It("check for required password", func() {
 			_, err := Parse()
 			Expect(err).NotTo(BeNil())
 		})
-
 	})
-
 })

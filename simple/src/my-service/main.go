@@ -19,12 +19,11 @@ func main() {
 		syscall.Exit(1)
 	}
 
-	//todo: make path configurable
-	mydb, err := db.NewDB("my.db")
-	if err != nil {
-		println(fmt.Sprintf("%v", err))
-		syscall.Exit(1)
-	}
+	mydb, err := db.NewDB(c.DBFile)
+	exitOnError(err)
+	err = mydb.CreateBucket("metadata")
+	exitOnError(err)
+
 	client := api.NewClientAPI(mydb)
 	admin := api.NewAdminAPI(mydb)
 
@@ -35,6 +34,10 @@ func main() {
 	router.PUT("/api/bucket/:bucket_name/:key", client.PutKeyHandler)
 	err = http.ListenAndServe(fmt.Sprintf(":%v", c.Port), router)
 
+	exitOnError(err)
+}
+
+func exitOnError(err error) {
 	if err != nil {
 		println(fmt.Sprintf("%v", err))
 		syscall.Exit(1)

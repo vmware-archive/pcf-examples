@@ -18,9 +18,7 @@ func NewAdminAPI(store db.KVStore) *AdminAPI {
 
 func (admin *AdminAPI) CreateBucketHandler(response http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	//todo: auth check
-	//todo: input validation. bucket name empyty, etc
-
-	//create credentials...?
+	//todo: create credentials...?
 
 	bucketName := params.ByName("bucket_name")
 	if bucketName == "" {
@@ -35,6 +33,7 @@ func (admin *AdminAPI) CreateBucketHandler(response http.ResponseWriter, request
 
 func (admin *AdminAPI) DeleteBucketHandler(response http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	//todo: auth check
+	//todo: remove credentials
 	bucketName := params.ByName("bucket_name")
 	if bucketName == "" {
 		response.WriteHeader(400)

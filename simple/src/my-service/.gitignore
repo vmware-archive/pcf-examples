@@ -2,4 +2,4 @@ main
 local_dev.sh
 
 *fakes
-my.db
+data.boltdb

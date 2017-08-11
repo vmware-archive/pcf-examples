@@ -45,6 +45,7 @@ var _ = Describe("Client", func() {
 			Expect(givenBucketName).To(Equal("myfirstbucket"))
 			Expect(givenKey).To(Equal("mykey"))
 		})
+
 		It("input validation failed", func() {
 			mydb := &dbfakes.FakeKVStore{}
 
@@ -60,8 +61,8 @@ var _ = Describe("Client", func() {
 
 			Expect(myResponse.Code).To(Equal(400))
 			Expect(mydb.GetCallCount()).To(Equal(0))
-
 		})
+
 		It("key not found", func() {
 			mydb.GetReturns(nil, nil)
 			myRequest := &http.Request{}
@@ -75,6 +76,7 @@ var _ = Describe("Client", func() {
 			client.GetKeyHandler(myResponse, myRequest, myParams)
 			Expect(myResponse.Code).To(Equal(404))
 		})
+
 		It("get throws error", func() {
 			mydb.GetReturns(nil, errors.New("something bad happen disk is corrupted"))
 			myRequest := &http.Request{}
@@ -113,8 +115,8 @@ var _ = Describe("Client", func() {
 			Expect(givenBucketName).To(Equal("myfirstbucket"))
 			Expect(givenKey).To(Equal("mykey"))
 			Expect(givenValue).To(Equal([]byte("my new value")))
-
 		})
+
 		It("input validation failed", func() {
 			mydb := &dbfakes.FakeKVStore{}
 			myRequest := &http.Request{}

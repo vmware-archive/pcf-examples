@@ -12,6 +12,7 @@ import (
 	. "github.com/onsi/gomega"
 	. "my-service/api"
 	"my-service/db/dbfakes"
+	"encoding/json"
 )
 
 var _ = Describe("Admin", func() {
@@ -36,6 +37,31 @@ var _ = Describe("Admin", func() {
 			Expect(myResponse.Code).To(Equal(200))
 			Expect(mydb.CreateBucketCallCount()).To(Equal(1))
 			Expect(mydb.CreateBucketArgsForCall(0)).To(Equal("my_new_bucket"))
+		})
+
+		It("adds credentials to metadata", func() {
+			myRequest := httptest.NewRequest("GET", "https://example.com", nil)
+			myResponse := httptest.NewRecorder()
+			myParams := httprouter.Params{
+				{Key: "bucket_name", Value: "my_new_bucket"},
+			}
+
+			adminAdpi.CreateBucketHandler(myResponse, myRequest, myParams)
+
+			Expect(mydb.PutCallCount()).To(Equal(1))
+
+			putBucket, putKey, putValue := mydb.PutArgsForCall(0)
+			Expect(putBucket).To(Equal("metadata"))
+			Expect(putKey).To(Equal("my_new_bucket"))
+
+			parsedPutValue := map[string]interface{}{}
+			err := json.Unmarshal(putValue, &parsedPutValue)
+
+			Expect(err).To(BeNil())
+			Expect(parsedPutValue["username"]).NotTo(BeNil())
+			Expect(parsedPutValue["username"]).To(HaveLen(36))
+			Expect(parsedPutValue["password"]).NotTo(BeNil())
+			Expect(parsedPutValue["password"]).To(HaveLen(36))
 		})
 
 		It("failure return 500", func() {

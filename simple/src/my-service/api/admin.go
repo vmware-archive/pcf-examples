@@ -4,8 +4,11 @@ import (
 	"encoding/base64"
 	"net/http"
 
+	"encoding/json"
 	"github.com/julienschmidt/httprouter"
+	"github.com/satori/go.uuid"
 	"my-service/db"
+	"my-service/models"
 )
 
 type AdminAPI struct {
@@ -23,8 +26,6 @@ func NewAdminAPI(adminUser string, adminPass string, store db.KVStore) *AdminAPI
 }
 
 func (admin *AdminAPI) CreateBucketHandler(response http.ResponseWriter, request *http.Request, params httprouter.Params) {
-	//todo: create credentials...?
-
 	bucketName := params.ByName("bucket_name")
 	if bucketName == "" {
 		response.WriteHeader(400)
@@ -32,8 +33,22 @@ func (admin *AdminAPI) CreateBucketHandler(response http.ResponseWriter, request
 	}
 	err := admin.store.CreateBucket(bucketName)
 	if err != nil {
+		//todo: logger
 		response.WriteHeader(500)
 	}
+
+	rawMetadata := models.BucketMetadata{
+		Username: uuid.NewV4().String(),
+		Password: uuid.NewV4().String(),
+	}
+	metadata, err := json.MarshalIndent(rawMetadata, "", "")
+	if err != nil {
+		//todo: logger
+		response.WriteHeader(500)
+	}
+	admin.store.Put("metadata", bucketName, []byte(metadata))
+
+	response.Write(metadata)
 }
 
 func (admin *AdminAPI) DeleteBucketHandler(response http.ResponseWriter, request *http.Request, params httprouter.Params) {

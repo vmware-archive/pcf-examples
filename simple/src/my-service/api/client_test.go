@@ -2,14 +2,13 @@ package api_test
 
 import (
 	"errors"
+	"github.com/julienschmidt/httprouter"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"strings"
-
-	"github.com/julienschmidt/httprouter"
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
 
 	. "my-service/api"
 	"my-service/db/dbfakes"

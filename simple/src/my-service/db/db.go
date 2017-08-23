@@ -14,6 +14,7 @@ type KVStore interface {
 
 	CreateBucket(bucketName string) error
 	DeleteBucket(bucketName string) error
+	BucketExists(bucketName string) bool
 	Put(bucketName string, key string, value []byte) error
 	Get(bucketName string, key string) ([]byte, error)
 }
@@ -44,6 +45,16 @@ func (db *kvStore) DeleteBucket(bucketName string) error {
 		err := tx.DeleteBucket([]byte(bucketName))
 		return err
 	})
+}
+
+func (db *kvStore) BucketExists(bucketName string) bool {
+	var exists bool
+	db.boltdb.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte(bucketName))
+		exists = b != nil
+		return nil
+	})
+	return exists
 }
 
 func (db *kvStore) Put(bucketName string, key string, value []byte) error {

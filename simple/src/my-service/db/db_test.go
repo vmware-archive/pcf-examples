@@ -2,11 +2,10 @@ package db_test
 
 import (
 	"fmt"
-	"io/ioutil"
-	"os"
-
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"io/ioutil"
+	"os"
 
 	. "my-service/db"
 )
@@ -76,7 +75,19 @@ var _ = Describe("Db", func() {
 	It("create bucket is idempotent", func() {
 		err := db.CreateBucket("foo")
 		Expect(err).To(BeNil())
+
 		err = db.CreateBucket("foo")
 		Expect(err).To(BeNil())
+	})
+
+	It("bucket exists", func() {
+		exists := db.BucketExists("foo")
+		Expect(exists).To(BeFalse())
+
+		err := db.CreateBucket("foo")
+		Expect(err).To(BeNil())
+
+		exists = db.BucketExists("foo")
+		Expect(exists).To(BeTrue())
 	})
 })

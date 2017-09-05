@@ -18,6 +18,7 @@ See src/README.md for service & broker code details
 * BOSH release + dashboard / sso
 * Docker-ify service + docker-bosh
 
+Tree
 * `./old` Delete this when done copying useful coe. Some examples from before, half working.
 * `./src` Source dir. Go code under here, using as root to import path.
 * `./src/my-service` Go implementation of key-value store, service

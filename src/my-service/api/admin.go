@@ -30,7 +30,7 @@ func NewAdminAPI(adminUser string, adminPass string, store db.KVStore, logger *l
 
 func (admin *AdminAPI) CreateBucketHandler(response http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	bucketName := params.ByName("bucket_name")
-	if bucketName == "" ||  bucketName == "metadata" {
+	if bucketName == "" || bucketName == "metadata" {
 		response.WriteHeader(400)
 		return
 	}

@@ -1,0 +1,8 @@
+---
+applications:
+- name: db
+  buildpack: go_buildpack
+  env:
+    ADMIN_USERNAME: ****
+    ADMIN_PASSWORD: ****
+    GOPACKAGENAME: my-service

@@ -1,5 +1,6 @@
 main
 local_dev.sh
+manifest.yml
 
 *fakes
 data.boltdb

@@ -56,4 +56,6 @@ ginkgo -r -failOnPending -race
 ```
 
 #### Dependency vendoring
-todo
+Via https://github.com/kardianos/govendor
+
+(Tried `dep`, but it added 10s of megabytes of golang.org/x/... to vendor)

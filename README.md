@@ -17,6 +17,7 @@ See src/README.md for service & broker code details
 * BOSH release + route registrar
 * BOSH release + dashboard / sso
 * Docker-ify service + docker-bosh
+* ODB-ify BOSH release?
 
 Tree
 * `./old` Delete this when done copying useful coe. Some examples from before, half working.

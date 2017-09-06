@@ -3,12 +3,19 @@ import json
 import os
 import requests
 import traceback
+import string
+import random
 
 app = flask.Flask(__name__)
 
 db_admin_username = os.getenv('DB_ADMIN_USERNAME')
 db_admin_password = os.getenv('DB_ADMIN_PASSWORD')
 db_url = os.getenv('DB_URL')
+
+
+def generate_random():
+    charset = string.ascii_uppercase + string.ascii_lowercase + string.digits
+    return ''.join(random.SystemRandom().choice(charset) for _ in range(20))
 
 
 # todo: missing basic auth check on broker api
@@ -39,7 +46,8 @@ def broker_catalog():
 
 @app.route("/v2/service_instances/<instance_id>", methods=['PUT'])
 def broker_provision_instance(instance_id):
-    api_response = requests.post("{}/api/admin/bucket/{}".format(db_url, instance_id), verify=False)
+    api_response = requests.post("{}/api/admin/bucket/{}".format(db_url, instance_id),
+                                 auth=(db_admin_username, db_admin_password), verify=False)
     if api_response.status_code > 299:
         print(api_response)
         return "{}", 500
@@ -57,8 +65,26 @@ def broker_deprovision_instance(instance_id):
 @app.route("/v2/service_instances/<instance_id>/service_bindings/<binding_id>", methods=['PUT'])
 def broker_bind_instance(instance_id, binding_id):
     # create credentials
-    response_body = json.dumps({}, indent=4)
-    return response_body, 201
+    username = generate_random()
+    password = generate_random()
+    creds = {
+        "username": username,
+        "password": password
+    }
+    api_response = requests.put("{}/api/admin/bucket/{}/credentials".format(db_url, instance_id),
+                                data=json.dumps(creds),
+                                auth=(db_admin_username, db_admin_password), verify=False)
+
+    if api_response.status_code > 299:
+        print(api_response)
+        return "{}", 500
+    else:
+        response_body = json.dumps({"credentials": {
+            "username": username,
+            "password": password,
+            "uri": "{}/api/bucket/{}".format(db_url, instance_id)
+        }})
+        return response_body, 201
 
 
 @app.route("/v2/service_instances/<instance_id>/service_bindings/<binding_id>", methods=['DELETE'])

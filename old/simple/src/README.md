@@ -1,6 +1,6 @@
 ## my-service
 
-todo: come up with clever name
+todo: rename all my-service to spacebears-db
 
 * Key value store with a service broker & api
 

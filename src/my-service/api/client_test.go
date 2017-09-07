@@ -1,24 +1,30 @@
 package api_test
 
 import (
+	"bytes"
 	"errors"
-	"github.com/julienschmidt/httprouter"
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 
+	"github.com/julienschmidt/httprouter"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 	. "my-service/api"
 	"my-service/db/dbfakes"
 )
 
 var _ = Describe("Client", func() {
 	var mydb *dbfakes.FakeKVStore
+	var logs *bytes.Buffer
+	var logger *log.Logger
 
 	BeforeEach(func() {
 		mydb = new(dbfakes.FakeKVStore)
+		logs = &bytes.Buffer{}
+		logger = log.New(logs, "", log.LstdFlags)
 	})
 
 	Context("GetKeyHandler", func() {
@@ -32,7 +38,7 @@ var _ = Describe("Client", func() {
 				{Key: "key", Value: "mykey"},
 			}
 
-			client := NewClientAPI(mydb)
+			client := NewClientAPI(mydb, logger)
 			client.GetKeyHandler(myResponse, myRequest, myParams)
 
 			Expect(myResponse.Code).To(Equal(200))
@@ -55,7 +61,7 @@ var _ = Describe("Client", func() {
 				{Key: "key", Value: ""},
 			}
 
-			client := NewClientAPI(mydb)
+			client := NewClientAPI(mydb, logger)
 			client.GetKeyHandler(myResponse, myRequest, myParams)
 
 			Expect(myResponse.Code).To(Equal(400))
@@ -71,7 +77,7 @@ var _ = Describe("Client", func() {
 				{Key: "key", Value: "mykey"},
 			}
 
-			client := NewClientAPI(mydb)
+			client := NewClientAPI(mydb, logger)
 			client.GetKeyHandler(myResponse, myRequest, myParams)
 			Expect(myResponse.Code).To(Equal(404))
 		})
@@ -85,7 +91,7 @@ var _ = Describe("Client", func() {
 				{Key: "key", Value: "mykey"},
 			}
 
-			client := NewClientAPI(mydb)
+			client := NewClientAPI(mydb, logger)
 			client.GetKeyHandler(myResponse, myRequest, myParams)
 			Expect(myResponse.Code).To(Equal(500))
 		})
@@ -105,7 +111,7 @@ var _ = Describe("Client", func() {
 				{Key: "key", Value: "mykey"},
 			}
 
-			client := NewClientAPI(mydb)
+			client := NewClientAPI(mydb, logger)
 			client.PutKeyHandler(myResponse, myRequest, myParams)
 			Expect(myResponse.Code).To(Equal(200))
 
@@ -125,7 +131,7 @@ var _ = Describe("Client", func() {
 				{Key: "key", Value: ""},
 			}
 
-			client := NewClientAPI(mydb)
+			client := NewClientAPI(mydb, logger)
 			client.PutKeyHandler(myResponse, myRequest, myParams)
 
 			Expect(myResponse.Code).To(Equal(400))
@@ -146,7 +152,7 @@ var _ = Describe("Client", func() {
 				{Key: "key", Value: "mykey"},
 			}
 
-			client := NewClientAPI(mydb)
+			client := NewClientAPI(mydb, logger)
 			client.PutKeyHandler(myResponse, myRequest, myParams)
 			Expect(myResponse.Code).To(Equal(400))
 			Expect(mydb.PutCallCount()).To(Equal(0))
@@ -165,7 +171,7 @@ var _ = Describe("Client", func() {
 				{Key: "key", Value: "mykey"},
 			}
 
-			client := NewClientAPI(mydb)
+			client := NewClientAPI(mydb, logger)
 			client.PutKeyHandler(myResponse, myRequest, myParams)
 			Expect(myResponse.Code).To(Equal(500))
 		})

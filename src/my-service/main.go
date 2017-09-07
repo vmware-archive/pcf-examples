@@ -31,7 +31,7 @@ func main() {
 		logger.Fatal(err)
 	}
 
-	client := api.NewClientAPI(mydb)
+	client := api.NewClientAPI(mydb, logger)
 	admin := api.NewAdminAPI(c.AdminUsername, c.AdminPassword, mydb, logger)
 
 	router := httprouter.New()

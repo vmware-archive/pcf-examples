@@ -1,12 +1,17 @@
-import flask
 import json
 import os
-import requests
-import traceback
-import string
 import random
+import string
+import traceback
+
+import flask
+import requests
+
+import auth
 
 app = flask.Flask(__name__)
+
+content_header = {'Content-Type': 'application/json; charset=utf-8'}
 
 db_admin_username = os.getenv('DB_ADMIN_USERNAME')
 db_admin_password = os.getenv('DB_ADMIN_PASSWORD')
@@ -18,14 +23,13 @@ def generate_random():
     return ''.join(random.SystemRandom().choice(charset) for _ in range(20))
 
 
-# todo: missing basic auth check on broker api
-
 @app.route("/health")
 def health():
     return "healthy"
 
 
 @app.route("/v2/catalog")
+@auth.requires_auth
 def broker_catalog():
     # catalog ids were randomly generated guids, per best practices
     catalog = {
@@ -45,53 +49,73 @@ def broker_catalog():
 
 
 @app.route("/v2/service_instances/<instance_id>", methods=['PUT'])
+@auth.requires_auth
 def broker_provision_instance(instance_id):
-    api_response = requests.post("{}/api/admin/bucket/{}".format(db_url, instance_id),
-                                 auth=(db_admin_username, db_admin_password), verify=False)
-    if api_response.status_code > 299:
-        print(api_response)
-        return "{}", 500
+    db_api_url = "{}/api/admin/bucket/{}".format(db_url, instance_id)
+    db_api_response = requests.post(
+        db_api_url, auth=(db_admin_username, db_admin_password), verify=False
+    )
+    if db_api_response.status_code > 299:
+        print(db_api_response)
+        return "{}", 500, content_header
     else:
-        return "{}", 201
-
-
-@app.route("/v2/service_instances/<instance_id>", methods=['DELETE'])
-def broker_deprovision_instance(instance_id):
-    # delete bucket
-    response_body = json.dumps({}, indent=4)
-    return response_body, 200
+        return "{}", 201, content_header
 
 
 @app.route("/v2/service_instances/<instance_id>/service_bindings/<binding_id>", methods=['PUT'])
+@auth.requires_auth
 def broker_bind_instance(instance_id, binding_id):
-    # create credentials
-    username = generate_random()
     password = generate_random()
     creds = {
-        "username": username,
+        "username": binding_id,
         "password": password
     }
-    api_response = requests.put("{}/api/admin/bucket/{}/credentials".format(db_url, instance_id),
-                                data=json.dumps(creds),
-                                auth=(db_admin_username, db_admin_password), verify=False)
+    db_api_url = "{}/api/admin/bucket/{}/credentials".format(db_url, instance_id)
+    db_api_response = requests.put(
+        db_api_url, data=json.dumps(creds), auth=(db_admin_username, db_admin_password), verify=False
+    )
 
-    if api_response.status_code > 299:
-        print(api_response)
-        return "{}", 500
+    if db_api_response.status_code > 299:
+        print(db_api_response)
+        return "{}", 500, content_header
     else:
         response_body = json.dumps({"credentials": {
-            "username": username,
+            "username": binding_id,
             "password": password,
             "uri": "{}/api/bucket/{}".format(db_url, instance_id)
         }})
-        return response_body, 201
+        return response_body, 201, content_header
 
 
 @app.route("/v2/service_instances/<instance_id>/service_bindings/<binding_id>", methods=['DELETE'])
+@auth.requires_auth
 def broker_unbind_instance(instance_id, binding_id):
-    # delete credentials
-    response_body = json.dumps({}, indent=4)
-    return response_body, 200
+    creds = {"username": binding_id}
+    db_api_url = "{}/api/admin/bucket/{}/credentials".format(db_url, instance_id)
+    db_api_response = requests.delete(
+        db_api_url, data=json.dumps(creds), auth=(db_admin_username, db_admin_password), verify=False
+    )
+
+    if db_api_response.status_code > 299:
+        print(db_api_response)
+        return "{}", 500, content_header
+    else:
+        response_body = json.dumps({}, indent=4)
+        return response_body, 200, content_header
+
+
+@app.route("/v2/service_instances/<instance_id>", methods=['DELETE'])
+@auth.requires_auth
+def broker_deprovision_instance(instance_id):
+    db_api_url = "{}/api/admin/bucket/{}".format(db_url, instance_id)
+    db_api_response = requests.delete(
+        db_api_url, auth=(db_admin_username, db_admin_password), verify=False
+    )
+    if db_api_response.status_code > 299:
+        print(db_api_response)
+        return "{}", 500, content_header
+    else:
+        return "{}", 200, content_header
 
 
 @app.errorhandler(500)

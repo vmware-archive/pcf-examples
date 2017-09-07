@@ -106,11 +106,52 @@ func (admin *AdminAPI) CreateBucketCredsHandler(response http.ResponseWriter, re
 }
 
 func (admin *AdminAPI) DeleteBucketCredsHandler(response http.ResponseWriter, request *http.Request, params httprouter.Params) {
-	panic("todo: implement")
+	bucketName := params.ByName("bucket_name")
+	rawMetadata, err := admin.store.Get("metadata", bucketName)
+	if err != nil {
+		admin.logger.Print(err)
+		response.WriteHeader(500)
+		return
+	}
+	metadata := models.BucketMetadata{}
+	err = json.Unmarshal(rawMetadata, &metadata)
+	if err != nil {
+		admin.logger.Print(err)
+		response.WriteHeader(500)
+		return
+	}
+	body, err := ioutil.ReadAll(request.Body)
+	if err != nil {
+		admin.logger.Print(err)
+		response.WriteHeader(500)
+		return
+	}
+	newCredentials := models.BucketCredentials{}
+	err = json.Unmarshal(body, &newCredentials)
+	if err != nil {
+		admin.logger.Print(err)
+		response.WriteHeader(400)
+		return
+	}
+
+	for i, _ := range metadata.Credentials {
+		existingCredentials := &metadata.Credentials[i]
+		if existingCredentials.Username == newCredentials.Username {
+			metadata.Credentials = append(metadata.Credentials[:i], metadata.Credentials[i+1:]...)
+			break
+		}
+	}
+
+	serializedMetadata, err := json.MarshalIndent(metadata, "", "")
+	err = admin.store.Put("metadata", bucketName, serializedMetadata)
+	if err != nil {
+		admin.logger.Print(err)
+		response.WriteHeader(500)
+		return
+	}
 }
 
 func (admin *AdminAPI) DeleteBucketHandler(response http.ResponseWriter, request *http.Request, params httprouter.Params) {
-	//todo: remove credentials
 	bucketName := params.ByName("bucket_name")
 	if bucketName == "" {
 		response.WriteHeader(400)

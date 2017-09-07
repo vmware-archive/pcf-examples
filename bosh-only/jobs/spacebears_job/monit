@@ -1,0 +1,5 @@
+check process spacebears
+  with pidfile /var/vcap/sys/run/spacebears/spacebears.pid
+  start program /var/vcap/jobs/spacebears/bin/start
+  stop program /var/vcap/jobs/spacebears/bin/stop
+  group vcap

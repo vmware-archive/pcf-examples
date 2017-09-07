@@ -1,0 +1,17 @@
+---
+name: spacebears
+
+templates:
+  start.erb: bin/start
+  stop.erb: bin/stop
+
+packages:
+- spacebears_pkg
+
+properties:
+  spacebears:
+    username:
+      description: username to admin API
+      default: admin
+    password:
+      description: password to admin API

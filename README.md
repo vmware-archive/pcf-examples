@@ -10,13 +10,13 @@ See src/README.md for service & broker code details
 
 * Base service: key/value db + service broker
     * Add make file to deal with Go commands
-* Just the BOSH release
+* BOSH release only
 * tile-generator BOSH release
-* BOSH release + metron
-* BOSH release + syslog
 * BOSH release + route registrar
-* BOSH release + dashboard / sso
+* BOSH release + syslog
 * Docker-ify service + docker-bosh
+* BOSH release + metron
+* BOSH release + dashboard / sso
 * ODB-ify BOSH release?
 
 Tree
@@ -24,3 +24,7 @@ Tree
 * `./src` Source dir. Go code under here, using as root to import path.
 * `./src/my-service` Go implementation of key-value store, service
 * `./src/broker` Python service broker
+
+## References
+
+* https://github.com/cloudfoundry/exemplar-release

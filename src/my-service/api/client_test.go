@@ -9,6 +9,7 @@ import (
 	"net/http/httptest"
 	"strings"
 
+	"encoding/base64"
 	"github.com/julienschmidt/httprouter"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -29,14 +30,18 @@ var _ = Describe("Client", func() {
 
 	Context("GetKeyHandler", func() {
 		It("success", func() {
-			mydb := &dbfakes.FakeKVStore{}
-			mydb.GetReturns([]byte("myvalue"), nil)
-			myRequest := &http.Request{}
-			myResponse := httptest.NewRecorder()
+
+			mydb.GetReturnsOnCall(0, []byte(`{"credentials":[{"username":"user","password":"abc123"}]}`), nil)
+			mydb.GetReturnsOnCall(1, []byte("myvalue"), nil)
+
+			myRequest := httptest.NewRequest("", "/", nil)
+			myRequest.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte("user:abc123")))
 			myParams := httprouter.Params{
 				{Key: "bucket_name", Value: "myfirstbucket"},
 				{Key: "key", Value: "mykey"},
 			}
+
+			myResponse := httptest.NewRecorder()
 
 			client := NewClientAPI(mydb, logger)
 			client.GetKeyHandler(myResponse, myRequest, myParams)
@@ -45,14 +50,13 @@ var _ = Describe("Client", func() {
 			Expect(myResponse.Body.String()).To(Equal("myvalue"))
 			Expect(myResponse.Header()["Content-Type"][0]).To(HavePrefix("text/plain"))
 
-			Expect(mydb.GetCallCount()).To(Equal(1))
-			givenBucketName, givenKey := mydb.GetArgsForCall(0)
+			Expect(mydb.GetCallCount()).To(Equal(2))
+			givenBucketName, givenKey := mydb.GetArgsForCall(1)
 			Expect(givenBucketName).To(Equal("myfirstbucket"))
 			Expect(givenKey).To(Equal("mykey"))
 		})
 
 		It("input validation failed", func() {
-			mydb := &dbfakes.FakeKVStore{}
 
 			myRequest := &http.Request{}
 			myResponse := httptest.NewRecorder()
@@ -69,8 +73,12 @@ var _ = Describe("Client", func() {
 		})
 
 		It("key not found", func() {
-			mydb.GetReturns(nil, nil)
-			myRequest := &http.Request{}
+
+			mydb.GetReturnsOnCall(0, []byte(`{"credentials":[{"username":"user","password":"abc123"}]}`), nil)
+			mydb.GetReturnsOnCall(1, nil, nil)
+			myRequest := httptest.NewRequest("", "/", nil)
+			myRequest.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte("user:abc123")))
+
 			myResponse := httptest.NewRecorder()
 			myParams := httprouter.Params{
 				{Key: "bucket_name", Value: "myfirstbucket"},
@@ -83,8 +91,11 @@ var _ = Describe("Client", func() {
 		})
 
 		It("get throws error", func() {
-			mydb.GetReturns(nil, errors.New("something bad happen disk is corrupted"))
-			myRequest := &http.Request{}
+			mydb.GetReturnsOnCall(0, []byte(`{"credentials":[{"username":"user","password":"abc123"}]}`), nil)
+			mydb.GetReturnsOnCall(1, nil, errors.New("something bad happen disk is corrupted"))
+			myRequest := httptest.NewRequest("", "/", nil)
+			myRequest.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte("user:abc123")))
+
 			myResponse := httptest.NewRecorder()
 			myParams := httprouter.Params{
 				{Key: "bucket_name", Value: "myfirstbucket"},
@@ -95,21 +106,37 @@ var _ = Describe("Client", func() {
 			client.GetKeyHandler(myResponse, myRequest, myParams)
 			Expect(myResponse.Code).To(Equal(500))
 		})
+
+		It("bad credentials", func() {
+
+			mydb.GetReturnsOnCall(0, []byte(`{"credentials":[{"username":"user","password":"hjljhkhkhj"}]}`), nil)
+			myRequest := httptest.NewRequest("", "/", nil)
+			myRequest.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte("user:abc123")))
+
+			myResponse := httptest.NewRecorder()
+			myParams := httprouter.Params{
+				{Key: "bucket_name", Value: "myfirstbucket"},
+				{Key: "key", Value: "mykey"},
+			}
+
+			client := NewClientAPI(mydb, logger)
+			client.GetKeyHandler(myResponse, myRequest, myParams)
+			Expect(myResponse.Code).To(Equal(401))
+		})
 	})
 
 	Context("PutKeyHandler", func() {
 		It("success", func() {
 			data := ioutil.NopCloser(strings.NewReader("my new value"))
-
-			myRequest := &http.Request{
-				Body: data,
-			}
-			myResponse := httptest.NewRecorder()
-
+			myRequest := httptest.NewRequest("", "/", data)
+			myRequest.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte("user:abc123")))
 			myParams := httprouter.Params{
 				{Key: "bucket_name", Value: "myfirstbucket"},
 				{Key: "key", Value: "mykey"},
 			}
+
+			mydb.GetReturns([]byte(`{"credentials":[{"username":"user","password":"abc123"}]}`), nil)
+			myResponse := httptest.NewRecorder()
 
 			client := NewClientAPI(mydb, logger)
 			client.PutKeyHandler(myResponse, myRequest, myParams)
@@ -122,25 +149,8 @@ var _ = Describe("Client", func() {
 			Expect(givenValue).To(Equal([]byte("my new value")))
 		})
 
-		It("input validation failed", func() {
-			mydb := &dbfakes.FakeKVStore{}
-			myRequest := &http.Request{}
-			myResponse := httptest.NewRecorder()
-			myParams := httprouter.Params{
-				{Key: "bucket_name", Value: ""},
-				{Key: "key", Value: ""},
-			}
-
-			client := NewClientAPI(mydb, logger)
-			client.PutKeyHandler(myResponse, myRequest, myParams)
-
-			Expect(myResponse.Code).To(Equal(400))
-			Expect(mydb.PutCallCount()).To(Equal(0))
-
-		})
-
-		It("body is garbage", func() {
-			data := ioutil.NopCloser(&ErrorReader{})
+		It("401 when no auth header", func() {
+			data := ioutil.NopCloser(strings.NewReader("my new value"))
 
 			myRequest := &http.Request{
 				Body: data,
@@ -154,6 +164,62 @@ var _ = Describe("Client", func() {
 
 			client := NewClientAPI(mydb, logger)
 			client.PutKeyHandler(myResponse, myRequest, myParams)
+
+			Expect(myResponse.Code).To(Equal(401))
+		})
+
+		It("401 when bad auth", func() {
+			data := ioutil.NopCloser(strings.NewReader("my new value"))
+			myRequest := httptest.NewRequest("", "/", data)
+			myRequest.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte("user:badpass")))
+			myParams := httprouter.Params{
+				{Key: "bucket_name", Value: "myfirstbucket"},
+				{Key: "key", Value: "mykey"},
+			}
+
+			myResponse := httptest.NewRecorder()
+			mydb.GetReturns([]byte(`{"credentials":[{"username":"user","password":"abc123"}]}`), nil)
+
+			client := NewClientAPI(mydb, logger)
+			client.PutKeyHandler(myResponse, myRequest, myParams)
+
+			Expect(myResponse.Code).To(Equal(401))
+		})
+
+		It("input validation failed", func() {
+			mydb := &dbfakes.FakeKVStore{}
+			myRequest := httptest.NewRequest("", "/", nil)
+			myRequest.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte("user:abc123")))
+			myParams := httprouter.Params{
+				{Key: "bucket_name", Value: ""},
+				{Key: "key", Value: ""},
+			}
+
+			myResponse := httptest.NewRecorder()
+			mydb.GetReturns([]byte(`{"credentials":[{"username":"user","password":"abc123"}]}`), nil)
+
+			client := NewClientAPI(mydb, logger)
+			client.PutKeyHandler(myResponse, myRequest, myParams)
+
+			Expect(myResponse.Code).To(Equal(400))
+			Expect(mydb.PutCallCount()).To(Equal(0))
+		})
+
+		It("body is garbage", func() {
+			data := ioutil.NopCloser(&ErrorReader{})
+			myRequest := httptest.NewRequest("", "/", data)
+			myRequest.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte("user:abc123")))
+			myParams := httprouter.Params{
+				{Key: "bucket_name", Value: "myfirstbucket"},
+				{Key: "key", Value: "mykey"},
+			}
+
+			myResponse := httptest.NewRecorder()
+			mydb.GetReturns([]byte(`{"credentials":[{"username":"user","password":"abc123"}]}`), nil)
+
+			client := NewClientAPI(mydb, logger)
+			client.PutKeyHandler(myResponse, myRequest, myParams)
+
 			Expect(myResponse.Code).To(Equal(400))
 			Expect(mydb.PutCallCount()).To(Equal(0))
 		})
@@ -161,15 +227,15 @@ var _ = Describe("Client", func() {
 		It("put throws error", func() {
 			mydb.PutReturns(errors.New("something bad happen disk is corrupted"))
 			data := ioutil.NopCloser(strings.NewReader("my new value"))
-
-			myRequest := &http.Request{
-				Body: data,
-			}
-			myResponse := httptest.NewRecorder()
+			myRequest := httptest.NewRequest("", "/", data)
+			myRequest.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte("user:abc123")))
 			myParams := httprouter.Params{
 				{Key: "bucket_name", Value: "myfirstbucket"},
 				{Key: "key", Value: "mykey"},
 			}
+
+			myResponse := httptest.NewRecorder()
+			mydb.GetReturns([]byte(`{"credentials":[{"username":"user","password":"abc123"}]}`), nil)
 
 			client := NewClientAPI(mydb, logger)
 			client.PutKeyHandler(myResponse, myRequest, myParams)

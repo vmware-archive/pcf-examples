@@ -10,11 +10,10 @@ wget "${go_pkg_remote}" -O ./tmp/go-linux-amd64.tar.gz
 echo "${go_pkg_remote}" > ./tmp/go-version.txt
 
 bosh add-blob ./tmp/go-linux-amd64.tar.gz go-linux-amd64.tar.gz
-bosh add-blob ./tmp/go-version.txt go-version.txt   
+bosh add-blob ./tmp/go-version.txt go-version.txt
 ```
 
 Package up our source code and add to blobs
-
 ```bash
 tar -cvzf ./tmp/spacebears_src.tgz -C ../src/ my-service/
 
@@ -22,21 +21,43 @@ bosh add-blob ./tmp/spacebears_src.tgz spacebears_src.tgz
 ```
 
 Create & upload release
-
 ```bash
 bosh create-release --force
 bosh upload-release
 ```
 
-### Deploy
+#### Troubleshooting
+```bash
+bosh -d bosh_only ssh spacebears_db_node
+# hope over to root for monit and other commands
+sudo su -
+```
 
-The bosh deployment manifest in `manifest/gcp_manifest.yml` is setup to work
-with a [bosh-bootloader](https://github.com/cloudfoundry/bosh-bootloader) deployed
-BOSH on GCP (using the default cloud-config)
+* job logs
+    * `/var/vcap/sys/log/spacebears/spacebears.out.log`
+    * `/var/vcap/sys/log/spacebears/spacebears.err.log`
+* monit logs
+    * `/var/vcap/monit/monit.log`
+
+### Deploy (Lite)
+
+If this is a fresh environment, be sure to upload a proper stemcell
+```bash
+bosh upload-stemcell https://s3.amazonaws.com/bosh-core-stemcells/warden/bosh-stemcell-3445.7-warden-boshlite-ubuntu-trusty-go_agent.tgz
+```
+
+The bosh deployment manifest in `manifest/lite_manifest.yml` is setup to work
+with a default [deployed BOSH Lite](https://bosh.io/docs/bosh-lite) using
+the [bosh-deployment warden cloud-config](https://github.com/cloudfoundry/bosh-deployment/blob/master/warden/cloud-config.yml)
 
 Deploy
-
 ```bash
-bosh upload-stemcell https://s3.amazonaws.com/bosh-gce-light-stemcells/light-bosh-stemcell-3445.7-google-kvm-ubuntu-trusty-go_agent.tgz
-bosh -d bosh_only deploy manifests/gcp_manifest.yml --no-redact
+bosh -d bosh_only deploy manifests/lite_manifest.yml --no-redact
+```
+
+Cleanup
+```bash
+bosh -d bosh_only delete-deployment --force
+bosh delete-release bosh-only-spacebears
+bosh clean-up
 ```

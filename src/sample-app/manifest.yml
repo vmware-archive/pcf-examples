@@ -2,3 +2,5 @@
 applications:
 - name: spacebears-consumer
   buildpack: python_buildpack
+  services:
+    - my-spacebears

@@ -35,14 +35,14 @@ bosh add blob ./tmp/go-linux-amd64.tar.gz go
 bosh add blob ./tmp/go-version.txt go
 
 bosh generate package go
-bosh generate package my-service
+bosh generate package spacebears
 
-mkdir -p src/my-service
-touch src/my-service/main.go
+mkdir -p src/spacebears
+touch src/spacebears/main.go
 
-bosh generate job my-service-job
+bosh generate job spacebears-job
 
-echo "Work in in go, my-service, and src/my-service to build first iteration..." 
+echo "Work in in go, spacebears, and src/my-service to build first iteration..." 
 
 bosh create release --force
 bosh upload release

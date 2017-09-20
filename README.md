@@ -1,29 +1,47 @@
-## Bosh Examples
+# bosh-examples
 
-A few small
+This repo builds out several bosh releases to a embedded key-value
+database service (spacebears, a toy example based on [bolt](https://github.com/boltdb/bolt)). 
+`bosh-simple` is the minimal
 [BOSH](https://bosh.io)
-examples.
+release with no dependencies. Each additional
+release layers in some other integration or feature. For example, 
+`bosh-route-registrar` add broadcasting a route via Cloud Foundry's Router component.
 
-See src/README.md for service & broker code details
+The `src` directory holds the source code for the database, a 
+[service broker](https://github.com/openservicebrokerapi/servicebroker/),
+and an example consumer app that uses service created by the broker.
 
-## todo
+The `tile-*` directories contain the Pivotal Cloud Foundry packaging
+for the bosh releases and broker. 
 
-* Base service: key/value db + service broker
-    * Add make file to deal with Go commands
-* BOSH release only
-* tile-generator BOSH release
-* BOSH release + route registrar
-* BOSH release + syslog
-* Docker-ify service + docker-bosh
-* BOSH release + metron
-* BOSH release + dashboard / sso
-* ODB-ify BOSH release?
+## BOSH Releases
 
-Tree
-* `./old` Delete this when done copying useful coe. Some examples from before, half working.
-* `./src` Source dir. Go code under here, using as root to import path.
-* `./src/my-service` Go implementation of key-value store, service
-* `./src/broker` Python service broker
+* `bosh-simple`
+    - the bare minimum release
+* `bosh-route-registrar`
+    - `bosh-simple` + route registrar (claims routes in Cloud Foundry)
+* `bosh-syslog`
+    - `bosh-simple` + syslog logging
+* `bosh-metron`
+      - `bosh-simple` + metron (emits service metrics)
+* `bosh-docker-bosh`
+      - spacebears packages as a BOSH deployed docker image
+* `bosh-dashboard`
+      - `bosh-simple` + sso dashboard for db
+* `bosh-odb`
+      - adapter for ODB release
+
+## Source code
+* `./src/spacebears`
+    - Golang key-value store with basic CRUD client API and admin API
+* `./src/broker`
+    - Python implementation of the Open Service Broker API for Spacebears 
+* `./src/sample-app`
+    - Python app consumer of Spacebears service.
+
+See [src/README.md](src/README.md) for detailed instructions on how to build,
+test, or change source code.
 
 ## References
 

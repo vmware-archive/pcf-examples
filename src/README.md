@@ -1,0 +1,129 @@
+## spacebears
+Filesystem based key-value store. This is multi-tenant, but not highly available. Clustering is not possible. 
+Just an example, don't use it for anything remotely real.
+* Client API for developers
+    - CRUD operations on keys within a bucket
+* Admin API (used by the service broker) to 
+    - create and delete the buckets.
+    - generate credentails for the client API.
+
+### Setup
+
+The Go code doesn't use full url qualified package paths. Add the project root
+to the `GOPATH` with
+
+```bash
+export GOPATH=$GOPATH:$(pwd)
+```
+
+Install dependencies (test and vendor)
+```bash
+go get github.com/onsi/ginkgo/ginkgo
+go get github.com/onsi/gomega
+go get github.com/maxbrunsfeld/counterfeiter
+go get github.com/kardianos/govendor
+```
+
+### Build
+```bash
+go generate ./...
+go build main.go
+```
+
+### Unit Test
+```bash
+go generate ./...
+go vet ./...
+ginkgo -r -failOnPending -race
+```
+
+### Run
+```bash
+export ADMIN_USERNAME=admin
+export ADMIN_PASSWORD=password
+export PORT=9000
+
+go run main.go
+```
+
+#### Dependency vendoring
+To change dependencies, see [govendor](https://github.com/kardianos/govendor) docs for specific commands.
+
+(Tried `dep`, but it added 10s of megabytes of golang.org/x/... to vendor)
+
+## service-broker
+Implementation of [service broker API](https://github.com/openservicebrokerapi/servicebroker/) to Spacebears.
+
+### Setup
+The application is written for Python 3.
+
+Install dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### Unit Test
+```bash
+python -m unittest discover -v -s . -p '*_test.py'
+```
+
+### Run
+```bash
+export ADMIN_USERNAME=admin
+export ADMIN_PASSWORD=awesome_broker
+export DB_ADMIN_USERNAME=admin
+export DB_ADMIN_PASSWORD=password
+export DB_URL=http://localhost:9000
+
+python broker.py
+```
+## Integration testing (via PCF Dev)
+Testing all these things together requires:
+* `spacebears` is running (ideally as a BOSH release)
+* `service-broker` is running (ideally pushed as a Cloud Foundry app)
+* `sample-app` is running on Pivotal Cloud Foundry
+
+#### Run spacebears
+To run Spacebears as a BOSH release locally, see `bosh-simple`.
+
+#### Run service-broker
+To run the service broker on a local Pivotal Cloud Foundry, download and run
+[PCF Dev](https://network.pivotal.io/products/pcfdev). After installing, start and target with
+```bash
+cf dev start
+cf dev target
+```
+
+Push the broker as an app and add it to the marketplace
+```bash
+cd src/broker
+cf push
+cf create-service-broker spacebears-broker admin awesome_broker https://spacebears-broker.local.pcfdev.io --space-scoped
+```
+
+View the logs with
+```bash
+echo "Get recent logs"
+cf logs spacebears-broker --recent
+echo "Stream new logs"
+cf logs spacebears-broker
+```
+
+#### Run sample-app
+To run the sample app
+
+```bash
+cd src/sample-app
+cf create-service spacebears-db plan1 my-spacebears
+cf push
+```
+
+View the logs with
+```bash
+echo "Get recent logs"
+cf logs spacebears-consumer --recent
+echo "Stream new logs"
+cf logs spacebears-consumer
+```
+
+Visit http://spacebears-consumer.local.pcfdev.io/ to verify success

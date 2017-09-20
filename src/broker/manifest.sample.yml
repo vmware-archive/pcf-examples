@@ -1,8 +1,0 @@
----
-applications:
-- name: kv-broker
-  buildpack: python_buildpack
-  env:
-    DB_ADMIN_USERNAME: ****
-    DB_ADMIN_PASSWORD: ****
-    DB_URL: https://cf.example.com/

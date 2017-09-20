@@ -15,3 +15,6 @@ releases/**/*.tgz
 
 tmp/**/*
 !tmp/.gitkeep
+
+# normally, config/blobs.yml wouldn't be ignored, but we're iterating with a local blobstore
+config/blobs.yml

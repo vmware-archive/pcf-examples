@@ -48,6 +48,29 @@ var _ = Describe("Db", func() {
 		Expect(err).NotTo(BeNil())
 	})
 
+	It("list bucket contents", func() {
+		err := db.Put("mybucket", "mykey0", []byte("myvalue0"))
+		Expect(err).To(BeNil())
+
+		err = db.Put("mybucket", "mykey1", []byte("myvalue1"))
+		Expect(err).To(BeNil())
+
+		err = db.Put("mybucket", "mykey2", []byte("myvalue2"))
+		Expect(err).To(BeNil())
+
+		list, err := db.List("mybucket")
+		Expect(err).To(BeNil())
+		Expect(list).To(HaveLen(3))
+		expectedList := []KeyValue{
+			{Key: []byte("mykey0"), Value: []byte("myvalue0")},
+			{Key: []byte("mykey1"), Value: []byte("myvalue1")},
+			{Key: []byte("mykey2"), Value: []byte("myvalue2")},
+		}
+		for i, kv := range list {
+			Expect(expectedList[i]).To(Equal(kv))
+		}
+	})
+
 	It("get elevates error", func() {
 		db.Close()
 		_, err := db.Get("mybucket", "mykey")
@@ -78,6 +101,23 @@ var _ = Describe("Db", func() {
 
 		err = db.CreateBucket("foo")
 		Expect(err).To(BeNil())
+	})
+
+	It("delete removes key", func() {
+		err := db.Put("mybucket", "mykey", []byte("myvalue"))
+		Expect(err).To(BeNil())
+
+		returnedValue, err := db.Get("mybucket", "mykey")
+
+		Expect(err).To(BeNil())
+		Expect(returnedValue).To(Equal([]byte("myvalue")))
+
+		err = db.Delete("mybucket", "mykey")
+		Expect(err).To(BeNil())
+
+		returnedValue, err = db.Get("mybucket", "mykey")
+		Expect(err).To(BeNil())
+		Expect(returnedValue).To(BeNil())
 	})
 
 	It("bucket exists", func() {

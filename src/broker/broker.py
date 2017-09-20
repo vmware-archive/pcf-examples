@@ -4,10 +4,9 @@ import random
 import string
 import traceback
 
+import auth
 import flask
 import requests
-
-import auth
 
 app = flask.Flask(__name__)
 
@@ -35,12 +34,13 @@ def broker_catalog():
     catalog = {
         "services": [{
             "id": 'c084b262-b733-45e2-974b-ed8ad94e808a',
-            "name": 'example-db-service',
+            "name": 'spacebears-db',
             "description": "Simple key/value services",
             "bindable": True,
+            "tags": ["key-value", "spacebears"],
             "plans": [{
                 "id": '30f7be98-dc0b-4fce-91bc-aeb87c864ecc',
-                "name": "first-plan",
+                "name": "plan1",
                 "description": "A first, free, service plan"
             }]
         }]

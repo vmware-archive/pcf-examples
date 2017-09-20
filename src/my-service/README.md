@@ -24,7 +24,9 @@
     * create bucket instance
     * create bucket creds...?
 
-### dev
+### broker dev
+
+### db dev
 #### Setup
 
 The Go code doesn't use full url qualified package paths. Add the project root
@@ -59,6 +61,20 @@ ginkgo -r -failOnPending -race
 via  [govendor](https://github.com/kardianos/govendor)
 
 (Tried `dep`, but it added 10s of megabytes of golang.org/x/... to vendor)
+
+### integration testing
+Testing the full BOSH releases and tiles has a longer cycle time. One
+easy way to test the service and broker together with Cloud Foundry is
+by pushing bosh services as apps and creating a space-scoped service.
+
+```bash
+cf create-service-broker spacebears-broker admin abc123 https://spacebears-broker.cf.example.com --space-scoped
+
+cf delete-service-broker spacebears-broker
+```
+
+Restarting the service app will require deleting existing service instances and bindings, as
+the state on disk is lost.
 
 ## todo
 * come up with clever name

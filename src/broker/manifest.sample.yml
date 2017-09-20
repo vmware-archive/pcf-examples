@@ -5,4 +5,4 @@ applications:
   env:
     DB_ADMIN_USERNAME: ****
     DB_ADMIN_PASSWORD: ****
-    DB_URL: https://pie-edge/
+    DB_URL: https://cf.example.com/

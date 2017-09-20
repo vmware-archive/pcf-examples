@@ -44,8 +44,10 @@ func main() {
 	router.DELETE("/api/admin/bucket/:bucket_name/credentials", admin.DeleteBucketCredsHandler)
 	router.DELETE("/api/admin/bucket/:bucket_name", admin.AdminAuthFilter(admin.DeleteBucketHandler))
 
-	router.GET("/api/bucket/:bucket_name/:key", client.GetKeyHandler)
 	router.PUT("/api/bucket/:bucket_name/:key", client.PutKeyHandler)
+	router.GET("/api/bucket/:bucket_name/", client.ListBucketHandler)
+	router.GET("/api/bucket/:bucket_name/:key", client.GetKeyHandler)
+	router.DELETE("/api/bucket/:bucket_name/:key", client.DeleteKeyHandler)
 
 	logger.Println(fmt.Sprintf("Listning on port %v", c.Port))
 	err = http.ListenAndServe(fmt.Sprintf(":%v", c.Port), router)

@@ -1,0 +1,4 @@
+---
+applications:
+- name: spacebears-consumer
+  buildpack: python_buildpack

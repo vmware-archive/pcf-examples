@@ -1,0 +1,58 @@
+<html>
+<head>
+    <style type="text/css">
+        body {
+            font-family: sans-serif
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+    <title>Spacebears Consumer App</title>
+</head>
+<body>
+<h2>Spacebears Consumer App</h2>
+
+{% if error %}
+<div class="error">
+    <h3>Error</h3>
+    {{error}}
+</div>
+{% endif %}
+
+<h4>Stored key value pairs</h4>
+<table>
+    {% for key, value in key_values.items() %}
+    <tr>
+        <td>{{key}}:</td>
+        <td>{{value}}</td>
+        <td>
+            <form action="/delete" method="post"  enctype=multipart/form-data>
+                <input type="hidden" name="key" value="{{key}}">
+                <input type="submit" value="Remove"/>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<br/>
+
+<form action="/put" method="post" enctype=multipart/form-data>
+    <fieldset>
+        <legend>Add data</legend>
+
+        <label for="key">Key</label>
+        <input id="key" name="key" type="text">
+
+        <label for="value">Value</label>
+        <input id="value" name="value" type="text">
+
+        <input type="submit"/>
+    </fieldset>
+</form>
+
+</body>
+</html>

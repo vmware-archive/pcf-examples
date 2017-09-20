@@ -30,7 +30,6 @@ func (client *ClientAPI) PutKeyHandler(response http.ResponseWriter, request *ht
 		response.WriteHeader(400)
 		return
 	}
-
 	if !client.checkAuth(response, request, bucketName) {
 		return
 	}
@@ -40,14 +39,45 @@ func (client *ClientAPI) PutKeyHandler(response http.ResponseWriter, request *ht
 		client.logger.Print(err)
 		response.WriteHeader(400)
 		return
-	} else {
-		err := client.store.Put(bucketName, key, data)
-		if err != nil {
-			client.logger.Print(err)
-			response.WriteHeader(500)
-			return
-		}
 	}
+
+	err = client.store.Put(bucketName, key, data)
+	if err != nil {
+		client.logger.Print(err)
+		response.WriteHeader(500)
+		return
+	}
+}
+
+func (client *ClientAPI) ListBucketHandler(response http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	bucketName := params.ByName("bucket_name")
+	if bucketName == "" {
+		response.WriteHeader(400)
+		return
+	}
+	if !client.checkAuth(response, request, bucketName) {
+		return
+	}
+
+	rawContents, err := client.store.List(bucketName)
+	if err != nil {
+		client.logger.Print(err)
+		response.WriteHeader(500)
+		return
+	}
+	contents := map[string]string{}
+	for _, kv := range rawContents {
+		contents[string(kv.Key)] = string(kv.Value)
+	}
+
+	jsonContents, err := json.Marshal(contents)
+	if err != nil {
+		client.logger.Print(err)
+		response.WriteHeader(500)
+		return
+	}
+
+	response.Write(jsonContents)
 }
 
 func (client *ClientAPI) GetKeyHandler(response http.ResponseWriter, request *http.Request, params httprouter.Params) {
@@ -57,7 +87,6 @@ func (client *ClientAPI) GetKeyHandler(response http.ResponseWriter, request *ht
 		response.WriteHeader(400)
 		return
 	}
-
 	if !client.checkAuth(response, request, bucketName) {
 		return
 	}
@@ -72,6 +101,25 @@ func (client *ClientAPI) GetKeyHandler(response http.ResponseWriter, request *ht
 		return
 	} else {
 		response.Write(value)
+	}
+}
+
+func (client *ClientAPI) DeleteKeyHandler(response http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	key := params.ByName("key")
+	bucketName := params.ByName("bucket_name")
+	if bucketName == "" || key == "" {
+		response.WriteHeader(400)
+		return
+	}
+	if !client.checkAuth(response, request, bucketName) {
+		return
+	}
+
+	err := client.store.Delete(bucketName, key)
+	if err != nil {
+		client.logger.Print(err)
+		response.WriteHeader(500)
+		return
 	}
 }
 

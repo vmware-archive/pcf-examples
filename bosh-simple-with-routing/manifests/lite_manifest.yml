@@ -1,9 +1,11 @@
 ---
 
-name: bosh_simple
+name: bosh_simple_with_routing
 
 releases:
-  - name: bosh-simple-spacebears
+  - name: bosh-simple-with-routing-spacebears
+    version: latest
+  - name: routing
     version: latest
 
 stemcells:
@@ -23,10 +25,26 @@ instance_groups:
     azs: [z1]
     jobs:
       - name: spacebears
-        release: bosh-simple-spacebears
+        release: bosh-simple-with-routing-spacebears
+      - name: route_registrar
+        release: routing
     properties:
       spacebears:
         password: symphony27_Trailers
+        port: 8080
+      route_registrar:
+        routes:
+        - name: spacebears
+          port: 8080
+          registration_interval: 20s
+          uris:
+          - spacebears.bosh-lite.com
+      nats:
+        machines:
+        - 10.244.0.129
+        port: 4222
+        user: nats
+        password: d6fjhjco6p4sy12bq3og
     vm_type: default
     cloud_properties:
       tags:

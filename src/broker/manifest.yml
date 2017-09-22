@@ -3,8 +3,9 @@ applications:
 - name: spacebears-broker
   buildpack: python_buildpack
   env:
-    ADMIN_USERNAME: admin
-    ADMIN_PASSWORD: monkey123
+    # tile-generator auto-creates SECURITY_USER_NAME and SECURITY_USER_PASSWORD as the broker's basic auth creds
+    SECURITY_USER_NAME: admin
+    SECURITY_USER_PASSWORD: monkey123
     DB_ADMIN_USERNAME: admin
     DB_ADMIN_PASSWORD: symphony27_Trailers
     DB_URL: http://10.244.0.34:9000

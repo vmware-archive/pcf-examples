@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+# If a command fails, exit immediately
+set -e
+
+LOG_DIR="/var/vcap/sys/log/spacebears"
+RUN_DIR="/var/vcap/sys/run/spacebears"
+DATA_DIR="/var/vcap/store/spacebears"
+PIDFILE="$RUN_DIR/spacebears.pid"
+
+export DB_FILE="$DATA_DIR/spacebears.boltdb"
+export ADMIN_USERNAME=<%= p("spacebears.username", "admin") %>
+export ADMIN_PASSWORD=<%= p("spacebears.password") %>
+export PORT=<%= p("spacebears.port", "9000") %>
+
+mkdir -p "$LOG_DIR" "$RUN_DIR" "$DATA_DIR"
+
+# If one of these directories is very large, chowning might take a very long time.
+# Consider only chowning if dir did not yet exist in the previous step
+chown -R vcap:vcap "$LOG_DIR" "$RUN_DIR" "$DATA_DIR"
+
+# heed warnings from start-stop-daemon(8) about use of exec flag with interpreters
+/sbin/start-stop-daemon \
+  --pidfile "$PIDFILE" \
+  --make-pidfile \
+  --chuid vcap:vcap \
+  --start \
+  --exec /var/vcap/packages/spacebears_pkg/bin/spacebears \
+   >> "$LOG_DIR/spacebears.out.log" \
+  2>> "$LOG_DIR/spacebears.err.log"

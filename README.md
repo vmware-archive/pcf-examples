@@ -43,6 +43,10 @@ for the bosh releases and broker.
 See [src/README.md](src/README.md) for detailed instructions on how to build,
 test, or change source code.
 
+(Spacebears is a nod to CockroachDB.
+[Tardigrades](https://en.wikipedia.org/wiki/Tardigrade)
+are both more indestructible and cuter and so seemed like a good choice.)
+
 ## References
 
 * https://github.com/cloudfoundry/exemplar-release

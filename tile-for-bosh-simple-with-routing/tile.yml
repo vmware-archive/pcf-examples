@@ -1,0 +1,60 @@
+---
+name: tile-for-bosh-only
+icon_file: resources/icon.jpg
+label: Spacebears Key-value Store
+description: Spacebears key-value store
+
+# apply_open_security_group: true       # Apply open security group, default: false
+
+properties:
+- name: db_credentials
+  type: simple_credentials
+  default:
+    identity: db_admin
+
+packages:
+- name: spacebears-broker
+  type: app-broker
+  enable_global_access_to_plans: true
+  manifest:
+    path: tmp/broker.zip
+    buildpack: python_buildpack
+    memory: 256M
+    env:
+      DB_ADMIN_USERNAME: (( .properties.db_credentials.identity ))
+      DB_ADMIN_PASSWORD: (( .properties.db_credentials.password ))
+      DB_URL: https://spacebears.(( ..cf.cloud_controller.system_domain.value ))
+
+- name: routing-release
+  type: bosh-release
+  path: tmp/routing-release.tgz
+
+- name: spacebears
+  type: bosh-release
+  path: tmp/bosh-simple-with-routing.tgz
+  jobs:
+  - name: spacebears_db_node
+    instances: 1
+    static_ip: 1
+    templates:
+    - name: spacebears
+      release: bosh-simple-with-routing-spacebears
+    - name: route_registrar
+      release: routing
+    properties:
+      spacebears:
+        password: (( .properties.db_credentials.password ))
+        username: (( .properties.db_credentials.identity ))
+        port: 8080
+      route_registrar:
+        routes:
+        - name: spacebears
+          port: 8080
+          registration_interval: 20s
+          uris:
+          - spacebears.(( ..cf.cloud_controller.system_domain.value ))
+      nats:
+        machines: (( ..cf.nats.ips ))
+        user: nats
+        password: (( ..cf.nats.credentials.password ))
+        port: 4222

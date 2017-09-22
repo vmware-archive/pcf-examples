@@ -1,7 +1,11 @@
-## bosh-simple
+## bosh-simple-with-routing
 
-BOSH packaging for Spacebears db. This is the bare minimum BOSH release on which the other examples
-build.
+This adds
+[routingrelease](https://github.com/cloudfoundry-incubator/routing-release)
+to `bosh-simple`. Routing release claims a route in Cloud Foundry. Without this,
+the Spacebars VM is assigned a static, internal IP. By broadcasting this route,
+apps can access the Spacebears service via DNS, and it's also accessible publicly
+through the router.
 
 ### Setting up release
 
@@ -32,6 +36,14 @@ bosh create-release --force
 bosh upload-release
 ```
 
+Download the [routingrelease](https://github.com/cloudfoundry-incubator/routing-release) and upload to the director
+```bash
+export routing_release_remote=https://github.com/cloudfoundry-incubator/routing-release/releases/download/0.162.0/routing-0.162.0.tgz
+export routing_release_path=./tmp/routing-release.tgz
+
+wget "${routing_release_remote}" -O ${routing_release_path}
+```
+
 ### Deploy (Lite)
 
 If this is a fresh environment, be sure to upload a proper stemcell
@@ -45,12 +57,12 @@ the [bosh-deployment warden cloud-config](https://github.com/cloudfoundry/bosh-d
 
 Deploy
 ```bash
-bosh -d bosh_simple deploy manifests/lite_manifest.yml --no-redact
+bosh -d bosh_simple_with_routing deploy manifests/lite_manifest.yml --no-redact
 ```
 
 #### Troubleshooting
 ```bash
-bosh -d bosh_simple ssh spacebears_db_node
+bosh -d bosh_simple_with_routing ssh spacebears_db_node
 # hope over to root for monit and other commands
 sudo su -
 ```
@@ -64,7 +76,7 @@ sudo su -
 ###  Cleanup
 
 ```bash
-bosh -d bosh_simple delete-deployment --force
-bosh delete-release bosh-simple-spacebears
+bosh -d bosh_simple_with_routing delete-deployment --force
+bosh delete-release bosh-simple-with-routing-spacebears
 bosh clean-up
 ```

@@ -87,14 +87,17 @@ Testing all these things together requires:
 To run Spacebears as a BOSH release locally, see `bosh-simple`.
 
 #### Run service-broker
-To run the service broker on a local Pivotal Cloud Foundry, download and run
-[PCF Dev](https://network.pivotal.io/products/pcfdev). After installing, start and target with
+To run the service broker on a local Cloud Foundry, see the
+[cf-deployment](https://github.com/cloudfoundry/cf-deployment)
+run instructions. Deploy this to the same bosh-lite as the `bosh-simple` deployment.
+
+Target the cf-deployment's cf
+(get the cf-deployment password with `grep "cf_admin_password" deployment-vars.yml`)
 ```bash
-cf dev start
-cf dev target
+cf login -a https://api.bosh-lite.com --skip-ssl-validation -u admin -p XXXXXXXXX
 ```
 
-Push the broker as an app and add it to the marketplace
+Then push the broker as an app and add it to the marketplace
 ```bash
 cd src/broker
 cf push

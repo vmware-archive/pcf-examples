@@ -5,8 +5,9 @@ from functools import wraps
 
 from flask import request, Response
 
-api_username = os.getenv('ADMIN_USERNAME')
-api_password = os.getenv('ADMIN_PASSWORD')
+# tile-generator auto-creates SECURITY_USER_NAME and SECURITY_USER_PASSWORD as the broker's basic auth creds
+api_username = os.getenv('SECURITY_USER_NAME')
+api_password = os.getenv('SECURITY_USER_PASSWORD')
 
 
 def check_auth(username, password):

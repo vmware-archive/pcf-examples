@@ -3,4 +3,4 @@ applications:
 - name: spacebears-consumer
   buildpack: python_buildpack
   services:
-    - my-spacebears
+    - my-spacebears # cf create-service spacebears-db plan1 my-spacebears

@@ -24,8 +24,20 @@ bosh add-blob ./tmp/go-linux-amd64.tar.gz go-linux-amd64.tar.gz
 bosh add-blob ./tmp/go-version.txt go-version.txt
 bosh add-blob ./tmp/spacebears_src.tgz spacebears_src.tgz
 
-bosh create-release --force
+echo "Creating release"
+bosh create-release --force --tarball ./tmp/
 
+echo "Uploading release"
 bosh upload-release
 
-yes | bosh -d bosh_simple deploy manifests/lite_manifest.yml --no-redact
+echo "Downloading routing release"
+routing_release_remote=https://github.com/cloudfoundry-incubator/routing-release/releases/download/0.162.0/routing-0.162.0.tgz
+routing_release_path=./tmp/routing-release.tgz
+if [ ! -f "${routing_release_path}" ]; then
+    wget "${routing_release_remote}" -O ${routing_release_path}
+fi
+
+echo "Uploading routing release"
+bosh upload-release ${routing_release_path}
+
+yes | bosh -d bosh_simple_with_routing deploy manifests/lite_manifest.yml --no-redact

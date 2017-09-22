@@ -1,0 +1,6 @@
+set -ex
+
+ls -lahR
+tar -xvf acceptance_tests_src.tgz
+
+mv acceptance-tests ${BOSH_INSTALL_TARGET}/

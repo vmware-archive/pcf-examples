@@ -1,0 +1,59 @@
+---
+
+name: bosh_simple_with_smoketests
+
+releases:
+  - name: bosh-simple-with-smoketests-spacebears
+    version: latest
+
+stemcells:
+  - alias: bosh-warden-boshlite-ubuntu-trusty-go_agent
+    os: ubuntu-trusty
+    version: latest
+
+update:
+  canaries: 1
+  max_in_flight: 10
+  canary_watch_time: 1000-30000
+  update_watch_time: 1000-30000
+
+instance_groups:
+  - name: smoke_tests_vm
+    instances: 1
+    lifecycle: errand
+    azs: [z1]
+    jobs:
+      - name: smoke_tests
+        release: bosh-simple-with-smoketests-spacebears
+    properties:
+      cf:
+        api_url: https://api.bosh-lite.com
+        admin_username: admin
+        admin_password: XXXX
+        skip_ssl_validation: true
+    vm_type: default
+    cloud_properties:
+      tags:
+        - allow-ssh
+    stemcell: bosh-warden-boshlite-ubuntu-trusty-go_agent
+    networks:
+      - name: default
+  - name: spacebears_db_node
+    instances: 1
+    azs: [z1]
+    jobs:
+      - name: spacebears
+        release: bosh-simple-with-smoketests-spacebears
+    properties:
+      spacebears:
+        password: symphony27_Trailers
+        port: 8080
+    vm_type: default
+    cloud_properties:
+      tags:
+        - allow-ssh
+    stemcell: bosh-warden-boshlite-ubuntu-trusty-go_agent
+    persistent_disk_type: 5GB
+    networks:
+      - name: default
+        static_ips: [10.244.1.0]

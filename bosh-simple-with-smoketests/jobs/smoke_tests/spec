@@ -1,0 +1,25 @@
+---
+name: smoke_tests
+packages:
+- cli
+- python
+- acceptance_tests_pkg
+
+templates:
+  errand.sh.erb: bin/run
+
+properties:
+  cf:
+    api_url:
+        description: 'Full URL of Cloud Foundry API'
+        example: 'https://api.cf.example.com'
+        default: ''
+    admin_username:
+        description: 'Username of the admin user'
+        default: ''
+    admin_password:
+        description: 'Password of the admin user'
+        default: ''
+    skip_ssl_validation:
+        description: 'Whether to add --skip-ssl-validation for cf cli'
+        default: false

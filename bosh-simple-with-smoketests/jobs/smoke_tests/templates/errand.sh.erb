@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+PYTHON_PATH=../packages/python/
+TEST_PATH=../packages/acceptance_tests_pkg/acceptance-tests/
+
+${PYTHON_PATH}/bin/python ${TEST_PATH}/test.py
+
+echo "Errand was run"
+
+../packages/cli/bin/cf --version
+

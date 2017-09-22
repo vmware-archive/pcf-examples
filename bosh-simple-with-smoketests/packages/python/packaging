@@ -1,0 +1,9 @@
+set -e
+
+cp python-version.txt ${BOSH_INSTALL_TARGET}
+
+tar xvf python.tgz --strip-components=1
+
+./configure --prefix=${BOSH_INSTALL_TARGET}
+make
+make install

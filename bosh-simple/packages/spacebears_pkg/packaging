@@ -15,5 +15,3 @@ go install spacebears
 
 # clean up source artifacts
 rm -rf ${BOSH_INSTALL_TARGET}/src ${BOSH_INSTALL_TARGET}/pkg
-
-echo "foo"

@@ -1,0 +1,9 @@
+[
+  {
+    "protocol": "tcp",
+    "destination": "10.244.1.0/32",
+    "ports": "8080",
+    "log": true,
+    "description": "Allow 8080 to the Spacebears db server"
+  }
+]

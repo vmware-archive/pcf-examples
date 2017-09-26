@@ -8,4 +8,4 @@ applications:
     SECURITY_USER_PASSWORD: monkey123
     DB_ADMIN_USERNAME: admin
     DB_ADMIN_PASSWORD: symphony27_Trailers
-    DB_URL: http://10.244.0.34:9000
+    DB_URL: http://10.244.1.0:8080

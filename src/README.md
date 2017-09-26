@@ -97,11 +97,19 @@ Target the cf-deployment's cf
 cf login -a https://api.bosh-lite.com --skip-ssl-validation -u admin -p XXXXXXXXX
 ```
 
+Allow all apps ton talk to the Spacebears db node (only needed if talking via IP and haven't registered a route)
+```bash
+cd src/broker
+cf create-security-group spacebears-asg spacebears-asg.json
+cf bind-running-security-group spacebears-asg
+```
+
 Then push the broker as an app and add it to the marketplace
 ```bash
 cd src/broker
 cf push
-cf create-service-broker spacebears-broker admin awesome_broker https://spacebears-broker.local.pcfdev.io --space-scoped
+cf create-service-broker spacebears-broker admin monkey123 https://spacebears-broker.bosh-lite.com
+cf enable-service-access spacebears-db
 ```
 
 View the logs with

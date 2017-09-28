@@ -1,4 +1,4 @@
-# bosh-examples
+# pcf-examples
 
 This repo builds out several bosh releases to a embedded key-value
 database service (spacebears, a toy example based on [bolt](https://github.com/boltdb/bolt)). 

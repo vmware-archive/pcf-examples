@@ -6,7 +6,7 @@ database service (spacebears, a toy example based on [bolt](https://github.com/b
 [BOSH](https://bosh.io)
 release with no dependencies. Each additional
 release layers in some other integration or feature. For example, 
-`bosh-route-registrar` add broadcasting a route via Cloud Foundry's Router component.
+`bosh-route-registrar` adds broadcasting a route via Cloud Foundry's Router component.
 
 The `src` directory holds the source code for the database, a 
 [service broker](https://github.com/openservicebrokerapi/servicebroker/),

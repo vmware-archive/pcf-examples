@@ -31,6 +31,8 @@ for the bosh releases and broker.
       - `bosh-simple` + sso dashboard for db
 * `bosh-odb`
       - adapter for ODB release
+* `bosh-links`
+* `bosh-tcp-routing`
 
 ## Source code
 * `./src/spacebears`

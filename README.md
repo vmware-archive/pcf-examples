@@ -19,6 +19,8 @@ for the bosh releases and broker.
 
 * `bosh-simple`
     - the bare minimum release
+* `bosh-simple-with-link`
+    - `bosh-simple` + BOSH link for sharing address and credentials
 * `bosh-route-registrar`
     - `bosh-simple` + route registrar (claims routes in Cloud Foundry)
 * `bosh-syslog`

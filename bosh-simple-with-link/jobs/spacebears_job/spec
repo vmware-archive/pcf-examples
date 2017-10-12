@@ -1,0 +1,27 @@
+---
+name: spacebears
+
+templates:
+  start.erb: bin/start
+  stop.erb: bin/stop
+
+packages:
+- spacebears_pkg
+
+properties:
+  spacebears.username:
+    description: username to admin API
+    default: admin
+  spacebears.password:
+    description: password to admin API
+  spacebears.port:
+    description: port db listens on
+    default: 9000
+
+provides:
+- name: spacebears
+  type: spacebears
+  properties:
+  - spacebears.username
+  - spacebears.password
+  - spacebears.port

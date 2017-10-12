@@ -1,0 +1,8 @@
+---
+name: spacebears_pkg
+
+dependencies:
+- golang
+
+files:
+- spacebears_src.tgz

@@ -35,12 +35,16 @@ packages:
   jobs:
   - name: spacebears_db_node
     instances: 1
-    static_ip: 1
+    dynamic_ip: 1
     templates:
     - name: spacebears
       release: bosh-simple-with-routing-spacebears
     - name: route_registrar
       release: routing
+      consumes: |
+        nats:
+          from: nats
+          deployment: (( ..cf.deployment_name ))
     properties:
       spacebears:
         password: (( .properties.db_credentials.password ))
@@ -53,8 +57,3 @@ packages:
           registration_interval: 20s
           uris:
           - spacebears.(( ..cf.cloud_controller.system_domain.value ))
-      nats:
-        machines: (( ..cf.nats.ips ))
-        user: nats
-        password: (( ..cf.nats.credentials.password ))
-        port: 4222

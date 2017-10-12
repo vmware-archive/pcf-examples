@@ -17,3 +17,11 @@ properties:
   spacebears.port:
     description: port db listens on
     default: 9000
+
+provides:
+- name: spacebears
+  type: spacebears
+  properties:
+  - spacebears.username
+  - spacebears.password
+  - spacebears.port

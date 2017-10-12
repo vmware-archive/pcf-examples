@@ -1,6 +1,6 @@
 ---
 
-name: bosh_simple
+name: bosh_simple_with_link
 
 releases:
   - name: bosh-simple-spacebears

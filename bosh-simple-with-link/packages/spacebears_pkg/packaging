@@ -1,0 +1,17 @@
+set -ex
+
+ls -lahR
+
+mkdir -p ${BOSH_INSTALL_TARGET}/src/
+ls -lahR
+tar -xvf spacebears_src.tgz
+ls -lahR
+mv spacebears ${BOSH_INSTALL_TARGET}/src/
+export GOPATH=$BOSH_INSTALL_TARGET
+
+export GOROOT=$(readlink -nf /var/vcap/packages/golang)
+export PATH=$GOROOT/bin:$PATH
+go install spacebears
+
+# clean up source artifacts
+rm -rf ${BOSH_INSTALL_TARGET}/src ${BOSH_INSTALL_TARGET}/pkg

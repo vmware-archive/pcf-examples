@@ -45,7 +45,7 @@ instance_groups:
         port: 4222
         user: nats
         password: d6fjhjco6p4sy12bq3og
-    vm_type: default
+    vm_type: minimal
     cloud_properties:
       tags:
         - allow-ssh
@@ -53,4 +53,3 @@ instance_groups:
     persistent_disk_type: 5GB
     networks:
       - name: default
-        static_ips: [10.244.1.0]

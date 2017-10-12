@@ -9,12 +9,11 @@ packages:
 - spacebears_pkg
 
 properties:
-  spacebears:
-    username:
-      description: username to admin API
-      default: admin
-    password:
-      description: password to admin API
-    port:
-      description: port db listens on
-      default: 9000
+  spacebears.username:
+    description: username to admin API
+    default: admin
+  spacebears.password:
+    description: password to admin API
+  spacebears.port:
+    description: port db listens on
+    default: 9000

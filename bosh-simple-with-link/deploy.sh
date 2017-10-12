@@ -16,8 +16,7 @@ echo "${go_pkg_remote}" > ./tmp/go-version.txt
 
 echo "Packaging local source"
 
-# FIXME RESTORE BEFORE COMMIT
-# tar -cvzf ./tmp/spacebears_src.tgz -C ../src/ spacebears/
+tar -cvzf ./tmp/spacebears_src.tgz -C ../src/ spacebears/
 
 echo "Adding blobs"
 

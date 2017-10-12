@@ -53,7 +53,7 @@ bosh upload-stemcell https://s3.amazonaws.com/bosh-core-stemcells/warden/bosh-st
 
 The bosh deployment manifest in `manifest/lite_manifest.yml` is setup to work
 with a default [deployed BOSH Lite](https://bosh.io/docs/bosh-lite) using
-the [bosh-deployment warden cloud-config](https://github.com/cloudfoundry/bosh-deployment/blob/master/warden/cloud-config.yml)
+the [cf-release bosh-lite cloud-config](https://github.com/cloudfoundry/cf-deployment/blob/master/iaas-support/bosh-lite/cloud-config.yml)
 
 Deploy
 ```bash

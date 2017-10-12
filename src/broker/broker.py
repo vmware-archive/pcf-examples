@@ -12,9 +12,26 @@ app = flask.Flask(__name__)
 
 content_header = {'Content-Type': 'application/json; charset=utf-8'}
 
-db_admin_username = os.getenv('DB_ADMIN_USERNAME')
-db_admin_password = os.getenv('DB_ADMIN_PASSWORD')
-db_url = os.getenv('DB_URL')
+def get_db_configuration():
+    # Return a list of [username, password, url]
+    properties = [None, None, None]
+    if os.getenv('SPACEBEARS_HOST') and os.getenv('SPACEBEARS_PROPERTIES'):
+        # Properties as set by tile-generator from bosh link.
+        link_properties = json.loads(os.getenv('SPACEBEARS_PROPERTIES'))
+        url = 'http://' + os.getenv('SPACEBEARS_HOST') + link_properties['spacebears']['port']
+        username = link_properties['spacebears']['username']
+        password = link_properties['spacebears']['password']
+        properties = [username, password, url]
+    # Override or set properties without bosh link.
+    if os.getenv('DB_ADMIN_USERNAME'):
+        properties[0] = os.getenv('DB_ADMIN_USERNAME')
+    if os.getenv('DB_ADMIN_PASSWORD'):
+        properties[1] = os.getenv('DB_ADMIN_PASSWORD')
+    if os.getenv('DB_URL'):
+        properties[2] = os.getenv('DB_URL')
+    return properties
+
+db_admin_username, db_admin_password, db_url = get_db_configuration()
 
 
 def generate_random():

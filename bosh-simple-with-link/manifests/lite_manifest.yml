@@ -27,11 +27,11 @@ instance_groups:
     properties:
       spacebears:
         password: symphony27_Trailers
-    vm_type: default
+    vm_type: minimal
     cloud_properties:
       tags:
         - allow-ssh
     stemcell: bosh-warden-boshlite-ubuntu-trusty-go_agent
-    persistent_disk_type: default
+    persistent_disk_type: 5GB
     networks:
       - name: default

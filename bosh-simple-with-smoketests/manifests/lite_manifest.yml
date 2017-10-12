@@ -31,7 +31,7 @@ instance_groups:
         admin_username: admin
         admin_password: XXXX
         skip_ssl_validation: true
-    vm_type: default
+    vm_type: minimal
     cloud_properties:
       tags:
         - allow-ssh
@@ -53,6 +53,6 @@ instance_groups:
       tags:
         - allow-ssh
     stemcell: bosh-warden-boshlite-ubuntu-trusty-go_agent
-    persistent_disk_type: default
+    persistent_disk_type: 5GB
     networks:
       - name: default

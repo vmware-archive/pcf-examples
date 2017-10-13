@@ -1,0 +1,41 @@
+---
+name: tile-for-bosh-simple-with-link
+icon_file: resources/icon.jpg
+label: Spacebears Key-value Store
+description: Spacebears key-value store
+
+# apply_open_security_group: true       # Apply open security group, default: false
+
+properties:
+- name: db_credentials
+  type: simple_credentials
+  default:
+    identity: db_admin
+
+packages:
+- name: spacebears-broker
+  type: app-broker
+  enable_global_access_to_plans: true
+  consumes:
+    spacebears:
+      from: spacebears
+  manifest:
+    path: tmp/broker.zip
+    buildpack: python_buildpack
+    memory: 256M
+
+- name: spacebears
+  type: bosh-release
+  path: tmp/bosh-simple-with-link.tgz
+  jobs:
+  - name: spacebears_db_node
+    instances: 1
+    dynamic_ip: 1
+    templates:
+    - name: spacebears
+      release: bosh-simple-spacebears
+    properties:
+      spacebears:
+        password: (( .properties.db_credentials.password ))
+        username: (( .properties.db_credentials.identity ))
+        port: 8080

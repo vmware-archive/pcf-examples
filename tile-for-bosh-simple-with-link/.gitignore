@@ -1,0 +1,7 @@
+product/
+release/
+
+tile-history.yml
+
+tmp/**/*
+!tmp/.gitkeep

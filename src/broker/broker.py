@@ -18,7 +18,7 @@ def get_db_configuration():
     if os.getenv('SPACEBEARS_HOST') and os.getenv('SPACEBEARS_PROPERTIES'):
         # Properties as set by tile-generator from bosh link.
         link_properties = json.loads(os.getenv('SPACEBEARS_PROPERTIES'))
-        url = 'http://' + os.getenv('SPACEBEARS_HOST') + link_properties['spacebears']['port']
+        url = 'http://' + os.getenv('SPACEBEARS_HOST') + ':' + str(link_properties['spacebears']['port'])
         username = link_properties['spacebears']['username']
         password = link_properties['spacebears']['password']
         properties = [username, password, url]

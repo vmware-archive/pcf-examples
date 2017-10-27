@@ -31,6 +31,7 @@ packages:
   - name: spacebears_db_node
     instances: 1
     dynamic_ip: 1
+    persistent_disk: 5120
     templates:
     - name: spacebears
       release: bosh-simple-spacebears

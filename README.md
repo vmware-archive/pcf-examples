@@ -35,6 +35,8 @@ for the bosh releases and broker.
       - adapter for ODB release
 * `bosh-links`
 * `bosh-tcp-routing`
+* `bosh-service-backups`
+     - Add backup sdk https://docs.pivotal.io/svc-sdk/service-backup/
 
 ## Source code
 * `./src/spacebears`

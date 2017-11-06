@@ -1,5 +1,5 @@
 ---
-name: spacebears-with-routing
+name: spacebears-simple
 icon_file: resources/icon.jpg
 label: Spacebears Key-value Store
 description: Spacebears key-value store
@@ -13,7 +13,7 @@ properties:
     identity: db_admin
 
 packages:
-- name: spacebears-routing-broker
+- name: spacebears-simple-broker
   type: app-broker
   enable_global_access_to_plans: true
   manifest:
@@ -25,13 +25,9 @@ packages:
       DB_ADMIN_PASSWORD: (( .properties.db_credentials.password ))
       DB_URL: https://spacebears.(( ..cf.cloud_controller.system_domain.value ))
 
-- name: routing-release
-  type: bosh-release
-  path: tmp/routing-release.tgz
-
 - name: spacebears
   type: bosh-release
-  path: tmp/bosh-simple-with-routing.tgz
+  path: tmp/bosh-simple.tgz
   jobs:
   - name: spacebears_db_node
     instances: 1
@@ -39,22 +35,9 @@ packages:
     persistent_disk: 5120
     templates:
     - name: spacebears
-      release: bosh-simple-with-routing-spacebears
-    - name: route_registrar
-      release: routing
-      consumes: |
-        nats:
-          from: nats
-          deployment: (( ..cf.deployment_name ))
+      release: bosh-simple-spacebears
     properties:
       spacebears:
         password: (( .properties.db_credentials.password ))
         username: (( .properties.db_credentials.identity ))
         port: 8080
-      route_registrar:
-        routes:
-        - name: spacebears
-          port: 8080
-          registration_interval: 20s
-          uris:
-          - spacebears.(( ..cf.cloud_controller.system_domain.value ))

@@ -3,6 +3,7 @@
 This directory contains the resources to build
 the broker and Spacebears' BOSH release into a
 [tile](https://docs.pivotal.io/tiledev/tile-structure.html).
+
 The broker obtains the Spacebears service's IP address and credentials
 via a BOSH link. This is a good pattern to follow if you do not want
 your service exposed via a route (cf.

@@ -1,5 +1,5 @@
 ---
-name: tile-for-bosh-simple-with-link
+name: spacebears-simple-with-link
 icon_file: resources/icon.jpg
 label: Spacebears Key-value Store
 description: Spacebears key-value store
@@ -13,7 +13,7 @@ properties:
     identity: db_admin
 
 packages:
-- name: spacebears-broker
+- name: spacebears-link-broker
   type: app-broker
   enable_global_access_to_plans: true
   consumes:

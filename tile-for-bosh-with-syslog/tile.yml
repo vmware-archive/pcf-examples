@@ -1,0 +1,104 @@
+---
+name: spacebears-simple-with-syslog
+icon_file: resources/icon.jpg
+label: Spacebears Key-value Store
+description: Spacebears key-value store
+
+# apply_open_security_group: true       # Apply open security group, default: false
+
+properties:
+- name: db_credentials
+  type: simple_credentials
+  default:
+    identity: db_admin
+
+forms:
+- name: syslog
+  label: Syslog
+  description: Configure properties for Spacebears log forwarding
+  properties:
+  - name: syslog_enabled
+    type: boolean
+    label: Disabled
+    configurable: true
+    description: Do you want to configure disable forwarding?
+  - name: syslog_address
+    type: network_address
+    label: Address
+    configurable: true
+  - name: syslog_port
+    type: port
+    label: Port
+    configurable: true
+    optional: true
+  - name: syslog_transport
+    type: dropdown_select
+    label: Transport Protocol
+    configurable: true
+    default: tcp
+    options:
+    - name: tcp
+      label: TCP
+    - name: upd
+      label: UPD
+    - name: relp
+      label: RELP
+  - name: syslog_tls_enabled
+    type: boolean
+    label: Enable TLS
+    optional: true
+  - name: syslog_permitted_peer
+    type: string
+    label: Permitted Peer
+    description: Either the accepted fingerprint (SHA1) or name of remote peer, e.g. *.example.com
+    optional: true
+  - name: syslog_tlsa_ca_cert
+    type: text
+    label: TLS CA Certificate
+    description: The CA certificate of the syslog destination
+    optional: true
+
+packages:
+- name: spacebears-simple-broker
+  type: app-broker
+  enable_global_access_to_plans: true
+  manifest:
+    path: tmp/broker.zip
+    buildpack: python_buildpack
+    memory: 256M
+    env:
+      DB_ADMIN_USERNAME: (( .properties.db_credentials.identity ))
+      DB_ADMIN_PASSWORD: (( .properties.db_credentials.password ))
+      DB_URL: https://spacebears.(( ..cf.cloud_controller.system_domain.value ))
+
+- name: syslog-migration
+  type: bosh-release
+  path: tmp/syslog-migration.tgz
+
+- name: spacebears
+  type: bosh-release
+  path: tmp/bosh-simple.tgz
+  jobs:
+  - name: spacebears_db_node
+    instances: 1
+    dynamic_ip: 1
+    persistent_disk: 5120
+    templates:
+    - name: spacebears
+      release: bosh-simple-spacebears
+    - name: syslog_forwarder
+      release: syslog-migration
+    properties:
+      spacebears:
+        password: (( .properties.db_credentials.password ))
+        username: (( .properties.db_credentials.identity ))
+        port: 8080
+      syslog:
+        migration:
+          disabled: (( .properties.syslog_enabled.value ))
+        address: (( .properties.syslog_address.value ))
+        port: (( .properties.syslog_port.value ))
+        transport: (( .properties.syslog_transport.value ))
+        tls_enabled: (( .properties.syslog_tls_enabled.value ))
+        permitted_peer: (( .properties.syslog_permitted_peer.value ))
+        ca_cert: (( .properties.syslog_tlsa_ca_cert.value ))

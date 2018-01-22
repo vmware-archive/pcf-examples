@@ -1,4 +1,4 @@
-# tile-for-bosh-simple
+# tile-for-bosh-with-syslog
 
 This directory contains the resources to build
 the broker and Spacebears' BOSH release into a

@@ -39,8 +39,8 @@ forms:
     options:
     - name: tcp
       label: TCP
-    - name: upd
-      label: UPD
+    - name: udp
+      label: UDP
     - name: relp
       label: RELP
   - name: syslog_tls_enabled

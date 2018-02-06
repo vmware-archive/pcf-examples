@@ -143,7 +143,7 @@ def internal_error(error):
 
 if __name__ == "__main__":
     try:
-        app.run(host='0.0.0.0', port=os.getenv('PORT', '8080'))
+        app.run(host='0.0.0.0', port=int(os.getenv('PORT', '8080')))
         print("Exited normally")
     except:
         print("* Exited with exception")

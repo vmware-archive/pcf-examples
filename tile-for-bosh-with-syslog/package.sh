@@ -28,7 +28,7 @@ bosh add-blob ./tmp/spacebears_src.tgz spacebears_src.tgz
 echo "Creating release"
 bosh create-release --force --tarball ./tmp/bosh-simple.tgz
 
-mv ./tmp/bosh-simple.tgz ../tile-for-bosh-simple/tmp/bosh-simple.tgz
+mv ./tmp/bosh-simple.tgz ../tile-for-bosh-with-syslog/tmp/bosh-simple.tgz
 
 popd
 

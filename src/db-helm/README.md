@@ -8,6 +8,14 @@ kubectl get deployments
 kubectl expose deployment "<deployment name>" --type=NodePort
 
 kubectl get services
+
+# To use the service, setup port forwarding.  Here's one way: 
+# Use the namespace name to fetch the pod name. 
+# Use the pod name and namespace to setup port forwarding
+# Then, the service can be accessed at localhost:48858
+POD=$(kubectl get pods --namespace=<namespace>  -o jsonpath='{.items[0].metadata.name}')
+kubectl port-forward $POD 48858:9000 --namespace=<namespace>
+
 export host="<service ip & port value>"
 
 echo "Create bucket and user"

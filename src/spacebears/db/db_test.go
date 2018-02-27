@@ -19,7 +19,7 @@ var _ = Describe("Db", func() {
 		tempDir, err = ioutil.TempDir("", "")
 		Expect(err).To(BeNil())
 
-		dbPath := fmt.Sprintf("%s%s%s", tempDir, os.PathSeparator, "test.db")
+		dbPath := fmt.Sprintf("%s%c%s", tempDir, os.PathSeparator, "test.db")
 		db, err = NewDB(dbPath)
 		Expect(err).To(BeNil())
 

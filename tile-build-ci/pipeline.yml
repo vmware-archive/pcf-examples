@@ -136,7 +136,7 @@ jobs:
         source:
           repository: cfplatformeng/tile-generator
       inputs:
-      - name: bosh-release
+      - name: bosh-release-in-bucket
       - name: broker-source
       - name: tile-source
       outputs:
@@ -147,7 +147,7 @@ jobs:
         args:
         - -exc
         - |
-          cp ../../bosh-release/bosh-simple-spacebears.tgz ./tmp/bosh-simple.tgz
+          cp ../../bosh-release-in-bucket/bosh-simple-spacebears.tgz ./tmp/bosh-simple.tgz
           zip -j -r ./tmp/broker.zip ../../broker-source/src/broker/* --exclude \*.pyc
           tile build
           cp product/spacebears-simple-0.0.1.pivotal ../../tile/

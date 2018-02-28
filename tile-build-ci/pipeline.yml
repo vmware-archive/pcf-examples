@@ -1,0 +1,156 @@
+---
+resource_types:
+- name: google-cloud-storage
+  type: docker-image
+  source:
+    repository: frodenas/gcs-resource
+
+resources:
+- name: app-source
+  type: git
+  source:
+    uri: git@github.com:cf-platform-eng/pcf-examples.git
+    paths: [src/spacebears]
+    private_key: ((app-source-private-key))
+
+- name: release-source
+  type: git
+  source:
+    uri: git@github.com:cf-platform-eng/pcf-examples.git
+    paths: [bosh-simple]
+    private_key: ((release-source-private-key))
+
+- name: broker-source
+  type: git
+  source:
+    uri: git@github.com:cf-platform-eng/pcf-examples.git
+    paths: [src/broker]
+    private_key: ((broker-source-private-key))
+
+- name: tile-source
+  type: git
+  source:
+    uri: git@github.com:cf-platform-eng/pcf-examples.git
+    paths: [tile-for-bosh-simple]
+    private_key: ((tile-source-private-key))
+
+- name: bosh-release
+  type: google-cloud-storage
+  source:
+    bucket: pcf-examples
+    versioned_file: bosh-simple-spacebears.tgz
+    json_key: ((gcp-service-account-key))
+
+- name: tile
+  type: google-cloud-storage
+  source:
+    bucket: pcf-examples
+    versioned_file: spacebears-simple-0.0.1.pivotal
+    json_key: ((gcp-service-account-key))
+
+jobs:
+- name: unit-tests
+  plan:
+  - get: app-source
+    trigger: true
+  - task: run-unit-tests
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: golang
+      inputs:
+      - name: app-source
+      run:
+        dir: app-source
+        path: /bin/sh
+        args:
+        - -exc
+        - |
+          export GOPATH="$GOPATH:$(pwd)"
+          go get github.com/onsi/ginkgo/ginkgo
+          go get github.com/onsi/gomega
+          go get github.com/maxbrunsfeld/counterfeiter
+          go get github.com/kardianos/govendor
+          go generate ./...
+          go vet ./...
+          ginkgo -r -failOnPending -race
+
+- name: bosh-release
+  plan:
+  - aggregate:
+    - get: app-source
+      passed:
+        - unit-tests
+      trigger: true
+    - get: release-source
+      trigger: true
+  - task: build-bosh-release
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: alpine/git
+      inputs:
+      - name: app-source
+      - name: release-source
+      outputs:
+      - name: bosh-release
+      run:
+        dir: release-source/bosh-simple
+        path: /bin/sh
+        args:
+        - -exc
+        - |
+          wget -O /usr/local/bin/bosh https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-2.0.48-linux-amd64
+          chmod +x /usr/local/bin/bosh
+          go_pkg_remote="https://storage.googleapis.com/golang/go1.9.linux-amd64.tar.gz"
+          wget -O ./tmp/go-linux-amd64.tar.gz $go_pkg_remote
+          echo "$go_pkg_remote" > ./tmp/go-version.txt
+          tar -cvzf ./tmp/spacebears_src.tgz -C ../../app-source/src/ spacebears/
+          echo "Adding blobs"
+          bosh add-blob ./tmp/go-linux-amd64.tar.gz go-linux-amd64.tar.gz
+          bosh add-blob ./tmp/go-version.txt go-version.txt
+          bosh add-blob ./tmp/spacebears_src.tgz spacebears_src.tgz
+          bosh create-release --force --tarball ../../bosh-release/bosh-simple-spacebears.tgz
+  - put: bosh-release
+    params:
+      file: bosh-release/bosh-simple-spacebears.tgz
+
+- name: tile
+  plan:
+  - aggregate:
+    - get: bosh-release
+      trigger: true
+    - get: broker-source
+      trigger: true
+    - get: tile-source
+      trigger: true
+  - task: build-tile
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: cfplatformeng/tile-generator
+      inputs:
+      - name: bosh-release
+      - name: broker-source
+      - name: tile-source
+      outputs:
+      - name: tile
+      run:
+        dir: tile-source/tile-for-bosh-simple
+        path: /bin/sh
+        args:
+        - -exc
+        - |
+          cp ../../bosh-release/bosh-simple-spacebears.tgz ./tmp/bosh-simple.tgz
+          zip -j -r ./tmp/broker.zip ../../broker-source/src/broker/* --exclude \*.pyc
+          tile build
+          cp product/spacebears-simple-0.0.1.pivotal ../../tile/
+  - put: tile
+    params:
+      file: tile/spacebears-simple-0.0.1.pivotal

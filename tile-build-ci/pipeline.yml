@@ -34,14 +34,14 @@ resources:
     paths: [tile-for-bosh-simple]
     private_key: ((tile-source-private-key))
 
-- name: bosh-release
+- name: bosh-release-in-bucket
   type: google-cloud-storage
   source:
     bucket: pcf-examples
     versioned_file: bosh-simple-spacebears.tgz
     json_key: ((gcp-service-account-key))
 
-- name: tile
+- name: tile-in-bucket
   type: google-cloud-storage
   source:
     bucket: pcf-examples
@@ -115,14 +115,14 @@ jobs:
           bosh add-blob ./tmp/go-version.txt go-version.txt
           bosh add-blob ./tmp/spacebears_src.tgz spacebears_src.tgz
           bosh create-release --force --tarball ../../bosh-release/bosh-simple-spacebears.tgz
-  - put: bosh-release
+  - put: bosh-release-in-bucket
     params:
       file: bosh-release/bosh-simple-spacebears.tgz
 
 - name: tile
   plan:
   - aggregate:
-    - get: bosh-release
+    - get: bosh-release-in-bucket
       trigger: true
     - get: broker-source
       trigger: true
@@ -151,6 +151,6 @@ jobs:
           zip -j -r ./tmp/broker.zip ../../broker-source/src/broker/* --exclude \*.pyc
           tile build
           cp product/spacebears-simple-0.0.1.pivotal ../../tile/
-  - put: tile
+  - put: tile-in-bucket
     params:
       file: tile/spacebears-simple-0.0.1.pivotal

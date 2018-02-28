@@ -2,3 +2,6 @@ spacebears:
   image: cfplatformeng/spacebears:latest
   username: admin_db
   password: monkey123
+
+service:
+  type: NodePort

@@ -62,7 +62,7 @@ def delete():
     return flask.redirect("/")
 
 
-def configure_app(app: flask.Flask):
+def configure_app_vcap_services(app: flask.Flask):
     vcap_services = json.loads(os.getenv('VCAP_SERVICES', '{}'))
     service_instance = vcap_services.get('spacebears-db', [])
     if len(service_instance) != 1:
@@ -75,10 +75,19 @@ def configure_app(app: flask.Flask):
     app.config['sb_password'] = credentials['password']
 
 
+def configure_app_env(app: flask.Flask):
+    app.config['sb_uri'] = os.environ['URI']
+    app.config['sb_username'] = os.environ['USERNAME']
+    app.config['sb_password'] = os.environ['PASSWORD']
+
+
 if __name__ == "__main__":
     try:
-        configure_app(app)
-        app.run(host='0.0.0.0', port=os.getenv('PORT', '8080'))
+        if 'VCAP_SERVICES' in os.environ:
+            configure_app_vcap_services(app)
+        else:
+            configure_app_env(app)
+        app.run(host='0.0.0.0', port=int(os.getenv('PORT', '8080')))
         print("Exited normally")
     except:
         print("* Exited with exception")

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/julienschmidt/httprouter"
 	"log"
@@ -10,6 +11,7 @@ import (
 	"spacebears/api"
 	"spacebears/config"
 	"spacebears/db"
+	"spacebears/models"
 )
 
 var logger *log.Logger
@@ -29,6 +31,26 @@ func main() {
 	err = mydb.CreateBucket("metadata")
 	if err != nil {
 		logger.Fatal(err)
+	}
+
+	var buckets map[string]models.BucketMetadata
+	err = json.Unmarshal([]byte(c.Buckets), &buckets)
+	if err != nil {
+		logger.Fatal(err)
+	}
+	for name, metadata := range buckets {
+		err = mydb.CreateBucket(name)
+		if err != nil {
+			logger.Fatal(err)
+		}
+		serializedMetadata, err := json.MarshalIndent(metadata, "", "")
+		if err != nil {
+			logger.Fatal(err)
+		}
+		err = mydb.Put("metadata", name, serializedMetadata)
+		if err != nil {
+			logger.Fatal(err)
+		}
 	}
 
 	client := api.NewClientAPI(mydb, logger)

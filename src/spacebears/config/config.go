@@ -9,6 +9,7 @@ type config struct {
 	AdminPassword string `envconfig:"admin_password" required:"true"`
 	Port          int    `envconfig:"port" default:"9000"`
 	DBFile        string `envconfig:"db_file" default:"data.boltdb"`
+	Buckets       string `envconfig:"buckets" default:"{}"`
 }
 
 func Parse() (*config, error) {

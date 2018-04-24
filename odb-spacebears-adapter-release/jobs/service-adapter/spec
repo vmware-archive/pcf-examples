@@ -1,0 +1,10 @@
+---
+name: service-adapter
+
+templates: {}
+
+packages:
+- openjdk
+- spacebears-adapter
+
+properties: {}

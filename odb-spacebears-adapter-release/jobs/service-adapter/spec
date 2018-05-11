@@ -5,6 +5,6 @@ templates: {}
 
 packages:
 - openjdk
-- spacebears-adapter
+- odb-spacebears-adapter
 
 properties: {}

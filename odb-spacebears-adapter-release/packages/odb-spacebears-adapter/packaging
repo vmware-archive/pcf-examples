@@ -1,6 +1,7 @@
 # abort script on any command that exits with a non zero value
-set -e
+set -eu
 
+mkdir ${BOSH_INSTALL_TARGET}/bin
 echo "echo 'hello'" > ${BOSH_INSTALL_TARGET}/bin/service-adapter
 chmod +x ${BOSH_INSTALL_TARGET}/bin/service-adapter
 

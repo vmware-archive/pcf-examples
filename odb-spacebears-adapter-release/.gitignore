@@ -26,4 +26,6 @@
 
 /manifests/
 /blobs/
-
+/dev_releases/
+/.dev_builds/
+/.mvn/

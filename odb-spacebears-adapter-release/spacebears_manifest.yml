@@ -1,0 +1,134 @@
+---
+name: spacebears-on-demand-broker-dev
+
+instance_groups:
+- azs:
+  - z1
+  instances: 1
+  name: broker
+  networks:
+  - name: default
+  stemcell: trusty
+  vm_extensions: []
+  vm_type: minimal
+  jobs:
+  - name: broker
+    release: on-demand-service-broker
+    properties:
+      shutdown_timeout_in_seconds: 10
+      startup_banner: true
+      username: broker
+      password: broker
+      disable_ssl_cert_verification: true
+      expose_operational_errors: false
+      port: 8080
+      bosh:
+        authentication:
+          basic:
+            username: admin
+            password: 3y2h6aulql0l37pr1lzt
+        root_ca_cert: |
+          -----BEGIN CERTIFICATE-----
+          MIIDEzCCAfugAwIBAgIQU9iFF/AiXfqqUtldgvcSFzANBgkqhkiG9w0BAQsFADAz
+          MQwwCgYDVQQGEwNVU0ExFjAUBgNVBAoTDUNsb3VkIEZvdW5kcnkxCzAJBgNVBAMT
+          AmNhMB4XDTE4MDcxNzE5MDI0OFoXDTE5MDcxNzE5MDI0OFowMzEMMAoGA1UEBhMD
+          VVNBMRYwFAYDVQQKEw1DbG91ZCBGb3VuZHJ5MQswCQYDVQQDEwJjYTCCASIwDQYJ
+          KoZIhvcNAQEBBQADggEPADCCAQoCggEBAM9B1K667Abf8fQeDKYYpPT0Z9bSYDwc
+          5mXV1anpQcxkstwsYp7+T8UAsd0U6ZhciYQWIGsbmFpa3SPsNMKRPhjeY1F97iQ6
+          jFv7jYikVqrO1kaiKbyMFNuJgEduLLB/C8ZNHUjq4DmFRMX9aae+QN2YO5LrT+ng
+          C2b2CK08MENiaWTkAz/8H3aNWfnkTGN0hnWDE3uOsCzV9c672vsCMMqKOTrb9JaV
+          /GLnKKdjfNTUahV92f/+Z2fPbz4tXHO88+ANyNJpL2EoudXkyLfJeEJHUgw1bdIA
+          b/phduSFoUeQ6fgDhPEKDeYI7fV1AKKEc5AFKcegjKpkDsMgpsNLUuUCAwEAAaMj
+          MCEwDgYDVR0PAQH/BAQDAgEGMA8GA1UdEwEB/wQFMAMBAf8wDQYJKoZIhvcNAQEL
+          BQADggEBAImCnXg923TrdThGnqr4CXEKMaT9egkRA5anaLk1VcksaKkFgYfcoyPr
+          D/KAQZJOg0IrF+Pjz0JOEwGJaMQSMTIY4yN3SNp+TcNeL70kGPMGhSlG4W163FXy
+          lySRDGPo3palkA6U+G42H5+YgAV7/DwrLpwjwKsHygEnKyJXVmRSB6n9rZptD2Hi
+          mjQ1J6eufgAK/UZAGJyymzM+r0gH7Rb2giP7sMlZsTZjF8TARK7PLazUq6vMtXcP
+          5ELvLArnbrHGg3uoe9YnWmbgKNsi7KpozAClbvMa6ty3sbAtG5nlQfwFove5hQDb
+          0JHoA0sqi7GN5FNauvC1R2EjmDcmsU0=
+          -----END CERTIFICATE-----
+        url: https://10.245.0.2:25555
+      cf:
+        authentication:
+          url: https://uaa.v3.pcfdev.io
+          user_credentials:
+            password: admin
+            username: admin
+        url: https://api.v3.pcfdev.io
+      service_catalog:
+        bindable: true
+        global_properties:
+          persistence: true
+        id: spacebears-dev
+        metadata:
+          display_name: spacebears
+        plan_updatable: true
+        service_description: spacebears Dedicated Instance
+        service_name: spacebears-dev
+        tags:
+        - pivotal
+        - spacebears
+        plans:
+        - description: spacebears Dedicated Instance
+          instance_groups:
+          - azs:
+            - z1
+            instances: 1
+            name: spacebears-server
+            networks:
+            - default
+            persistent_disk_type: 10GB
+            vm_type: minimal
+          metadata:
+            bullets: []
+            display_name: spacebears Dedicated Instance
+          name: dedicated-vm
+          plan_id: spacebears-dedicated-dev
+      service_deployment:
+        releases:
+        - name: bosh-simple-spacebears
+          version: 0+dev.14
+          jobs:
+            - spacebears
+        stemcell:
+          os: ubuntu-trusty
+          version: 3586.16
+
+  - consumes:
+      nats:
+        deployment: cf
+        from: nats
+    name: route_registrar
+    properties:
+      route_registrar:
+        routes:
+        - name: spacebears-odb-dev
+          port: 8080
+          registration_interval: 20s
+          uris:
+          - spacebears-service-broker-dev.v3.pcfdev.io
+    release: routing
+
+  - name: service-adapter
+    release: dummy-adapter
+
+releases:
+- name: on-demand-service-broker
+  version: latest
+- name: dummy-adapter
+  version: latest
+- name: routing
+  version: latest
+
+stemcells:
+- alias: trusty
+  os: ubuntu-trusty
+  version: '3586.16'
+
+update:
+  canaries: 1
+  canary_watch_time: 3000-180000
+  max_in_flight: 4
+  update_watch_time: 3000-180000
+
+variables: []

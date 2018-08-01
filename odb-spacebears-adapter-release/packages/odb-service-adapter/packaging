@@ -1,0 +1,19 @@
+#!/bin/bash
+set -e
+
+mkdir ${BOSH_INSTALL_TARGET}/class_files
+mkdir ${BOSH_INSTALL_TARGET}/src
+
+cp ${BOSH_COMPILE_TARGET}/jars/json.jar ${BOSH_INSTALL_TARGET}/class_files
+cp -R . ${BOSH_INSTALL_TARGET}/src
+
+
+cd ${BOSH_INSTALL_TARGET}
+mkdir jdk && tar zxf ${BOSH_COMPILE_TARGET}/openjdk-1.8.0_162.tar.gz -C jdk
+export JAVA_HOME=${BOSH_INSTALL_TARGET}/jdk
+
+$JAVA_HOME/bin/javac -cp ${BOSH_INSTALL_TARGET}/class_files/json.jar ${BOSH_COMPILE_TARGET}/example/OdbSpacebearsAdapter.java
+
+mkdir ${BOSH_INSTALL_TARGET}/bin
+cp ${BOSH_COMPILE_TARGET}/code.sh ${BOSH_INSTALL_TARGET}/bin/service-adapter
+chmod +x ${BOSH_INSTALL_TARGET}/bin/service-adapter

@@ -1,7 +1,0 @@
----
-name: openjdk
-
-dependencies: []
-
-files: 
-- openjdk/**/*

@@ -1,0 +1,13 @@
+- bosh init-release
+- bosh generate-job service-adapter
+- bosh generate-package odb-service-adapter
+- mkdir config
+- touch config/blobs.yml
+- bosh create-release --force --name dummy-adapter
+- bosh -e islington upload-release --name dummy-adapter
+- add package as dependency of the job
+
+- login in cf
+- cf create-service-broker redis-dev2 broker supersecretbrokerpassword https://redis-service-broker-dev2.islington.services-enablement.cf-app.com
+- cf enable-service-access redis-dev2 -p dedicated-vm
+- verify cf m

@@ -1,8 +1,0 @@
----
-name: maven
-
-dependencies:
-- openjdk
-
-files:
-- maven/**/*

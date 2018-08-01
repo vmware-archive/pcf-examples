@@ -1,9 +1,6 @@
-adapter/adapter.tgz:
-  size: 13312
-  sha: 265c1d7ba3d28e34dd42d506b125dc48f9572648
-maven/apache-maven-3.5.3-bin.tar.gz:
-  size: 8799579
-  sha: bbfa43a4ce4ef96732b896d057f8a613aa229801
-openjdk/openjdk-1.8.0_25.tar.gz:
-  size: 76345318
-  sha: 53d1e12168471d60992df0f443f21456b8924191
+jars/json.jar:
+  size: 62116
+  sha: 26ba2ec0e791a32ea5dfbedfcebf36447ee5b12c
+openjdk-1.8.0_162.tar.gz:
+  size: 78245143
+  sha: 76a74043924dfc1bbb5531b02be014fcd2ef0a6e

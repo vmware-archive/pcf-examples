@@ -4,7 +4,6 @@ name: service-adapter
 templates: {}
 
 packages:
-- openjdk
-- odb-spacebears-adapter
+- odb-service-adapter
 
 properties: {}

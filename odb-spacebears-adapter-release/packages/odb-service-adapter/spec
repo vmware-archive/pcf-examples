@@ -1,0 +1,7 @@
+---
+name: odb-service-adapter
+
+dependencies:
+files:
+- ./**/*
+- openjdk-1.8.0_162.tar.gz

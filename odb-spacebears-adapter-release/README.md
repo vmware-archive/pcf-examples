@@ -91,31 +91,10 @@ These are the steps you'll need to do to get it all running locally.
   1) Use the [cf dev readme](https://github.com/cloudfoundry-incubator/cfdev) to deploy cf dev 
      to your workstation.  cf dev comes with both a bosh director and cloud foundry making it 
      handy for local bosh development.  
-  2) Change the release of bosh-dns to 1.8.0 in cf dev so that we have a bosh-dns version 
-     compatible with the release of odb we are using.
-     - Upload bosh-dns-release-1.8.0
-     - Modify the runtime configuration to make the newer bosh-dns available.  
-  3) Upload the Spacebears release
-  4) Upload the ODB SDK release
-  5) Deploy your BOSH Release
+  2) Upload the Spacebears release
+  3) Upload the ODB SDK release
+  4) Deploy your BOSH Release
   
-#### Install cf dev with a compatible bosh-dns
-    ```bosh
-     wget https://github.com/cloudfoundry/bosh-dns-release/archive/v1.8.0.tar.gz -O bosh-dns-release-1.8.0.tar.gz 
-     bosh upload-release bosh-dns-release-1.8.0.tar.gz
-     bosh config --name dns --type runtime --json | jq -r .Tables[0].Rows[0].content > cf-devs-runtime-config.yml
-     bosh update-runtime-config --name dns cf-devs-runtime-config.yml
-    ```
-    Before doing the update-runtime-config command, modify cf-devs-runtime-config.yml to 
-    change the version of bosh-dns and remove the path to the older version.  Releases section
-    should look like this: 
-    ```
-    releases:
-    - name: bosh-dns
-      sha1: f7242b8cf5da6db583802159d28edaed80fce9a8
-      version: 1.8.0+dev.1
-    ```
- 
  #### Upload the Spacebears release
     ```
     git clone https://github.com/cf-platform-eng/pcf-examples.git

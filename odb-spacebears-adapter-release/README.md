@@ -7,7 +7,7 @@ BOSH release of the
 service with its service adapter written in Java. 
 
 
-##Background
+## Background
 
 The Spacebears service is a simple name/value pair database designed
 for demonstration purposes.  You can create/delete "buckets".  Inside those
@@ -39,45 +39,45 @@ The developer of this Spacebears ODB BOSH release needs to write the following c
  
 ## Build your BOSH release
 
-####Build the BOSH Release 
+#### Build the BOSH Release 
     ```
     bosh init-release
     bosh generate-job service-adapter
     bosh generate-package odb-service-adapter
     ```
 
-####Add the Java SDK to the BOSH Release 
+#### Add the Java SDK to the BOSH Release 
     ```
     wget https://download.java.net/java/jdk8u192/archive/b04/binaries/jdk-8u192-ea-bin-b04-linux-x64-01_aug_2018.tar.gz
     bosh add-blob ../downloads/jdk-8u192-ea-bin-b04-linux-x64-01_aug_2018.tar.gz jdk-8u192-ea-bin-b04-linux-x64-01_aug_2018.tar.gz
     ```
 
-####Add the json jar to the BOSH Release
+#### Add the json jar to the BOSH Release
     ```
     wget http://central.maven.org/maven2/org/json/json/20180130/json-20180130.jar
     bosh add-blob ../downloads/json-20180130.jar json-20180130.jar
     ```
 
-####Modify the job spec
+#### Modify the job spec
 The only purpose of the service-adapter job in this sample is to create a dependency on the
 odb-service-adapter package, so the package gets put on disk where it is needed. 
 [Example](https://github.com/cf-platform-eng/pcf-examples/blob/master/odb-spacebears-adapter-release/jobs/service-adapter/spec)
 
-####Modify the package
+#### Modify the package
 Update the spec file to include the file dependencies from the blobs and src. 
 [Example](https://github.com/cf-platform-eng/pcf-examples/blob/master/odb-spacebears-adapter-release/packages/odb-service-adapter/spec)
 
 Update the packaging script to compile the adapter and place it in the correct locations. 
 [Example](https://github.com/cf-platform-eng/pcf-examples/blob/master/odb-spacebears-adapter-release/packages/odb-service-adapter/packaging)  
 
-####Create the service adapter
+#### Create the service adapter
   1) Fetch the deployment manifest for the stand-alone Spacebears bosh release.  
      It can be found [here](https://github.com/cf-platform-eng/pcf-examples/blob/master/bosh-simple/manifests/lite_manifest.yml)
   2) Encode that into the [Java adapter](https://github.com/cf-platform-eng/pcf-examples/blob/master/odb-spacebears-adapter-release/src/example/OdbSpacebearsAdapter.java). 
   3) Write a bash wrapper around the Java main program so it complies to the 
      executable path.  [Example](https://github.com/cf-platform-eng/pcf-examples/blob/master/odb-spacebears-adapter-release/src/code.sh)
   
-####Create the deployment manifest
+#### Create the deployment manifest
 [Example](https://github.com/cf-platform-eng/pcf-examples/blob/master/odb-spacebears-adapter-release/spacebears_manifest.yml)
 If you copy the example, you may need to: 
   - tweek the name of your release
@@ -99,7 +99,7 @@ These are the steps you'll need to do to get it all running locally.
   4) Upload the ODB SDK release
   5) Deploy your BOSH Release
   
-####Install cf dev with a compatible bosh-dns
+#### Install cf dev with a compatible bosh-dns
     ```bosh
      wget https://github.com/cloudfoundry/bosh-dns-release/archive/v1.8.0.tar.gz -O bosh-dns-release-1.8.0.tar.gz 
      bosh upload-release bosh-dns-release-1.8.0.tar.gz
@@ -116,7 +116,7 @@ These are the steps you'll need to do to get it all running locally.
       version: 1.8.0+dev.1
     ```
  
- ####Upload the Spacebears release
+ #### Upload the Spacebears release
     ```
     git clone https://github.com/cf-platform-eng/pcf-examples.git
     cd pcf-examples/bosh-simple
@@ -127,7 +127,7 @@ These are the steps you'll need to do to get it all running locally.
     The delete-deployment is there simply becuase the deployment is included 
     in the deploy.sh and we don't need it. 
  
- ####Upload the ODB SDK Release
+ #### Upload the ODB SDK Release
   Get the ODB SDK from Pivotal Network. 
   [url](https://network.pivotal.io/api/v2/products/on-demand-services-sdk/releases/97789/product_files/135987/download)
 
@@ -135,14 +135,14 @@ These are the steps you'll need to do to get it all running locally.
     bosh upload-release on-demand-service-broker-release-v0.21.2.tar.gz
     ```
 
-####Deploy your BOSH Release 
+#### Deploy your BOSH Release 
 ```
 bosh create-release --force
 bosh upload-release
 bosh -d spacebears-on-demand-broker-dev deploy spacebears_manifest.yml
 ```
  
-##Exercise it
+## Exercise it
 
 Tell cf about the broker:  
 ```

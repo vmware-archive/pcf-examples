@@ -9,6 +9,10 @@ public class OdbSpacebearsAdapter {
             generateManifest(args[1], args[2], args[3]);
             return;
 		}
+        if (args != null && args.length > 0 && "create-binding".equals(args[0])) {
+            createBinding(args[1], args[2], args[3]);
+            return;
+        }
         System.exit(10);
     }
     
@@ -52,5 +56,20 @@ public class OdbSpacebearsAdapter {
         System.out.println(s);
 
     }
+
+    public static void createBinding(String serviceDeployment, String a, String b) {
+
+	    String bindingResponse = "{\n" +
+                "  \"credentials\": {\n" +
+                "    \"uri\": \"http://localhost:9000/api\",\n" +
+                "    \"username\": \"admin\",\n" +
+                "    \"password\": \"symphony27_Trailers\"\n" +
+                "  }\n" +
+                "}";
+
+	    System.out.println(bindingResponse);
+
+    }
+
 
 }

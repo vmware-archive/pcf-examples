@@ -2,8 +2,6 @@
 
 Developing a BOSH add-on from scratch can be challenging, especially if not trying to do this iteratively.  This document has a suggested plan to developing an add-on, which may make it simpler to get started.
 
-Note that you cannot use BOSH Lite for developing add-ons, since the way VMs are provisioned in VirtualBox don't match well enough to a full BOSH environment.  It's recommended to use our Platform Engineering PIE environments.
-
 Here are the steps we'll do:
 
 1. Prove the software works as expected on a BOSH-managed VM
@@ -194,8 +192,8 @@ In a new directory, use tile-generator to create a stub tile.yml file: `tile ini
 ```yaml
 name: <tile-name>
 icon_file: resources/icon.png
-label: Brief Text for the Tile Icon
-description: Longer description of the tile's purpose
+label: Title of the service
+description: Description of the service
 
 forms:
 - name: service_properties
@@ -217,7 +215,8 @@ forms:
 packages:
 - name: <package-name>
   type: bosh-release
-  NEED MORE ACCURATE DETAILS HERE
+  path: resources/<release-name>.tgz
+
 runtime_configs:
 - name: <runtime-config-name>
   runtime_config:
@@ -230,9 +229,9 @@ runtime_configs:
       - name: <job-name>
         release: <release-name>
         properties:
-          license_key: (( .properties.license_key ))
+          license_key: (( .properties.license_key.value ))
           feature_a:
-            enabled: (( .properties.feature_a.enabled ))
+            enabled: (( .properties.feature_a.enabled.value ))
       include:
         deployments: my-canary-deployment
       exclude:

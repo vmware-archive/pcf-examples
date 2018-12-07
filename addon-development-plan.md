@@ -187,6 +187,8 @@ Set your runtime config using `bosh update-runtime-config`, and then deploy (or 
 
 When everything is looking good with a direct BOSH deployment, it's time to wrap it in a tile.
 
+NOTE: If you only have an addon in your tile.yml, you MUST have at least one form with a property defined.  Without it, staging your tile will cause a failure inside OpsManager.
+
 In a new directory, use tile-generator to create a stub tile.yml file: `tile init` ([Docs](https://docs.pivotal.io/tiledev/2-3/tile-generator.html)).  The contents of your runtime configuration manifest will nearly all be copied into the tile.yml.  This is also where you can specify the forms that the PCF Operators will use to set your properties.  Here's an example tile.yml for an addon:
 
 ```yaml

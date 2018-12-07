@@ -1,7 +1,7 @@
-# tile-for-bosh-with-syslog
+# tile-for-bosh-simple-addon
 
-This directory contains the resources to build
-the broker and Spacebears' BOSH release into a
+This directory contains the resources to wrap a
+BOSH release with a runtime config into a
 [tile](https://docs.pivotal.io/tiledev/tile-structure.html).
 
 The tile is built via

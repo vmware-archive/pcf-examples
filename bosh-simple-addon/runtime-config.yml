@@ -1,0 +1,23 @@
+releases:
+- name: "os-conf"
+  version: "20.0.0"
+  url: "https://bosh.io/d/github.com/cloudfoundry/os-conf-release?v=20.0.0"
+  sha1: "a60187f038d45e2886db9df82b72a9ab5fdcc49d"
+
+addons:
+  - name: simple-runtime-config
+    jobs:
+    - name: login_banner
+      release: os-conf
+      properties:
+        login_banner:
+          text: Welcome to a Spacebears VM!
+    include:
+      jobs:
+      - name: spacebears
+        release: bosh-simple-spacebears
+      - name: spacebears
+        release: bosh-simple-with-routing-spacebears
+      - name: spacebears
+        release: bosh-simple-with-smoketests-spacebears
+

@@ -1,0 +1,45 @@
+---
+name: spacebears-simple-addon
+icon_file: resources/icon.jpg
+label: Spacebears Addon
+description: Spacebears Addon
+
+forms:
+- name: spacebears_addon_properties
+  label: Spacebears Addon Properties
+  description: Properties for the Spacebears addon
+  properties:
+  - name: login_message
+    type: string
+    label: Login message
+    description: The message to display when SSH'ing into a Spacebears VM
+    default: Welcome to a Spacebears VM!
+
+packages:
+- name: os-conf
+  type: bosh-release
+  path: resources/os-conf-release.20.0.0.tgz
+  version: 20.0.0
+
+runtime_configs:
+- name: spacebears-simple-runtime-config
+  runtime_config:
+    releases:
+    - name: os-conf
+      version: 20.0.0
+    addons:
+    - name: spacebears-simple-addon
+      jobs:
+      - name: login_banner
+        release: os-conf
+        properties:
+          login_banner:
+            text: (( .properties.login_message.value ))
+      include:
+        jobs:
+        - name: spacebears
+          release: bosh-simple-spacebears
+        - name: spacebears
+          release: bosh-simple-with-routing-spacebears
+        - name: spacebears
+          release: bosh-simple-with-smoketests-spacebears

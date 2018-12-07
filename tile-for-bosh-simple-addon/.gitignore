@@ -1,0 +1,9 @@
+product/
+release/
+
+tile-history.yml
+
+tmp/**/*
+!tmp/.gitkeep
+
+resources/*.tgz

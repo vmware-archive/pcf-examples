@@ -1,13 +1,13 @@
-# Suggested development plan for BOSH Add-Ons
+# Suggested development plan for BOSH addons
 
-Developing a BOSH add-on from scratch can be challenging, especially if not trying to do this iteratively.  This document has a suggested plan to developing an add-on, which may make it simpler to get started.
+Developing a BOSH addon from scratch can be challenging, especially if not trying to do this iteratively.  This document has a suggested plan to developing an addon, which may make it simpler to get started.
 
 Here are the steps we'll do:
 
 1. Prove the software works as expected on a BOSH-managed VM
 2. Create a BOSH release and deploy with a manifest
 3. Add configuration properties
-4. Make a runtime configuration to test as an add-on
+4. Make a runtime configuration to test as an addon
 5. Make a tile.yml that wraps your deployment
 6. Make a tile.yml that wraps your runtime configuration
 
@@ -64,7 +64,7 @@ When you have all of the above, create a versioned release with `bosh create-rel
 
 ### Deploy with a manifest file
 
-Finally, create a simple deployment manifest file and use BOSH to deploy your software into its own VM.  By not using a runtime configuration (and making this an add-on) you make it much faster to test updates to your packages, jobs and releases.  Start with something like this as a stub (replacing anything inside of `<>`'s):
+Finally, create a simple deployment manifest file and use BOSH to deploy your software into its own VM.  By not using a runtime configuration (and making this an addon) you make it much faster to test updates to your packages, jobs and releases.  Start with something like this as a stub (replacing anything inside of `<>`'s):
 
 ```yaml
 ---
@@ -148,15 +148,15 @@ instance_groups:
 
 ## Build BOSH runtime config
 
-When your software is deploying and running successfully as a BOSH deployment, it's time to change it into an add-on.  You define an add-on inside of a runtime config.  This tells BOSH when to include your release inside of other deployments.
+When your software is deploying and running successfully as a BOSH deployment, it's time to change it into an addon.  You define an addon inside of a runtime config.  This tells BOSH when to include your release inside of other deployments.
 
 The runtime configuration is very similar to a deployment manifest with a few exceptions:
 
-1. There is no specifictations for requirements of the VM (stemcell definition, network, persistent disk, etc...).  This is because it's not your add-on which determines that, but the other deployment that specifies the VM that will be provisioned.
-2. You get to specify inclusion and exclusion criteria ([BOSH docs](https://bosh.io/docs/runtime-config/#placement-rules)).  This is how BOSH will determine which deployments will include your add-on.
+1. There is no specifictations for requirements of the VM (stemcell definition, network, persistent disk, etc...).  This is because it's not your addon which determines that, but the other deployment that specifies the VM that will be provisioned.
+2. You get to specify inclusion and exclusion criteria ([BOSH docs](https://bosh.io/docs/runtime-config/#placement-rules)).  This is how BOSH will determine which deployments will include your addon.
 3. You must specify a version for your release.  No using `latest` anymore.
 
-Here's an example runtime config for deploying an add-on:
+Here's an example runtime config for deploying an addon:
 
 ```yaml
 releases:
@@ -179,7 +179,7 @@ addons:
     - os: [windows1803, windows2012R2, windows2016]
 ```
 
-When testing your add-on, it's best to specify an inclusion rule that targets a specific deployment.  One that you control.  This way, you're sure that your add-on will not be added to other deployments, which is nice when on a shared an environment such as our PIE environments.
+When testing your addon, it's best to specify an inclusion rule that targets a specific deployment.  One that you control.  This way, you're sure that your addon will not be added to other deployments, which is nice when on a shared an environment such as our PIE environments.
 
 Set your runtime config using `bosh update-runtime-config`, and then deploy (or re-deploy) another bosh deployment that matches your inclusion rules.
 
@@ -187,7 +187,7 @@ Set your runtime config using `bosh update-runtime-config`, and then deploy (or 
 
 When everything is looking good with a direct BOSH deployment, it's time to wrap it in a tile.
 
-In a new directory, use tile-generator to create a stub tile.yml file: `tile init` ([Docs](https://docs.pivotal.io/tiledev/2-3/tile-generator.html)).  The contents of your runtime configuration manifest will nearly all be copied into the tile.yml.  This is also where you can specify the forms that the PCF Operators will use to set your properties.  Here's an example tile.yml for an add-on:
+In a new directory, use tile-generator to create a stub tile.yml file: `tile init` ([Docs](https://docs.pivotal.io/tiledev/2-3/tile-generator.html)).  The contents of your runtime configuration manifest will nearly all be copied into the tile.yml.  This is also where you can specify the forms that the PCF Operators will use to set your properties.  Here's an example tile.yml for an addon:
 
 ```yaml
 name: <tile-name>

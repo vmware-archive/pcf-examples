@@ -33,6 +33,7 @@ It is important to become familiar with the BOSH CLI and using SSH to connect to
 ### Issue: Can't SSH into a custom deployment with a Windows stemcell.
 - Error: `Error: Action Failed ssh: Getting host public key: OpenSSH is not running: sshd service not running and start type is disabled.  To enable ssh on Windows you must run the enable_ssh job from the windows-utilities-release.`
 - Suggestion: You need to augment your deployment manifest with the `windows-utilities` that enable SSH for Windows VMs:
+
 In your `deployment-manifest.yml` under
 ```
 instance_groups:
@@ -62,7 +63,7 @@ add:
   - name: windows-utilities
     version: latest
   ```
-Redeploy, then you will now be able to ssh into the VM with `bosh ssh`. 
+Redeploy, then you will now be able to ssh into the VM with `bosh ssh`.
 
 ## Additional Resources
 Here are some more resources on troubleshooting general PCF issues (not specific for Tile Dev):

@@ -23,8 +23,7 @@ It is important to become familiar with the BOSH CLI and using SSH to connect to
 - Error: `Error: <job name> is not running after update. review logs for failed jobs: <job name>`
 - Error: `Action Failed get_task: Task <id> result: 2 of 3 pre-start scripts failed. Failed Jobs: <job-name>, <job-name>. Successful Jobs: <job-name>`
 - Suggestion 1: Use the bosh CLI to `bosh ssh` [Instructions: Advanced Troubleshooting with BOSH)](https://docs.pivotal.io/pivotalcf/2-3/customizing/trouble-advanced.html#bosh-ssh) into the VM and view logs in `/var/vcap/sys/log/<job-name>/.log`. View the BOSH documentation on [Job Logs](https://bosh.io/docs/job-logs/) for more info.
-*make sure files look like they are meant to (pre-start)*
-- Suggestion 2: Another option is to run the failing job start script (often `start.erb`) directly on the VM. SSH into the VM with `bosh ssh`, and run the start script - found in `/var/vcap/jobs/<job-name>/bin/<start-script>`.
+- Suggestion 2: Another option is to run the failing job start script (often `start.erb`) directly on the VM. SSH into the VM with `bosh ssh`, and run the start script - found in `/var/vcap/jobs/<job-name>/bin/<start-script>`. While on the VM, check to make sure your files have been set up correctly. 
 
 ### Issue: Operations Manager Web UI has crashed due after staging your Tile (clicking plus button) due to something wrong with Tile Metadata
 - Suggestion 1: Use the [OM tool](https://github.com/pivotal-cf/om) to call the Ops Manager API and use the `om unstage-product` command to unstage your Tile. The UI should now be accessible.

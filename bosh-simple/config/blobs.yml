@@ -1,9 +1,1 @@
-go-linux-amd64.tar.gz:
-  size: 102601309
-  sha: sha256:d70eadefce8e160638a9a6db97f7192d8463069ab33138893ad3bf31b0650a79
-go-version.txt:
-  size: 63
-  sha: sha256:3534db8368d547018f4931d9a8a3248a0305853b43289b6505293958b72d40ad
-spacebears_src.tgz:
-  size: 828965
-  sha: sha256:d8d43d0c6ea1d4ed0a5ea13b06843ebb344bc7bbd1f560a432863db09608fa79
+--- {}

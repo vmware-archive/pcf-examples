@@ -25,7 +25,7 @@ bosh add-blob ./tmp/go-version.txt go-version.txt
 bosh add-blob ./tmp/spacebears_src.tgz spacebears_src.tgz
 
 echo "Creating release"
-bosh create-release --force --tarball ./tmp/
+bosh create-release --force --tarball ./tmp/bosh-simple-with-routing.tgz
 
 echo "Uploading release"
 bosh upload-release

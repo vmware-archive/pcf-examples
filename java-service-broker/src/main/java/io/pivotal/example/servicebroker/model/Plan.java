@@ -90,4 +90,18 @@ public class Plan {
     public void setMaximumPollingDuration(Integer maximumPollingDuration) {
         this.maximumPollingDuration = maximumPollingDuration;
     }
+
+    @Override
+    public String toString() {
+        return "Plan{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", metadata=" + metadata +
+                ", free=" + free +
+                ", bindable=" + bindable +
+                ", planUpdateable=" + planUpdateable +
+                ", maximumPollingDuration=" + maximumPollingDuration +
+                '}';
+    }
 }

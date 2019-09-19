@@ -137,4 +137,22 @@ public class Service {
     public void setPlans(List<Plan> plans) {
         this.plans = plans;
     }
+
+    @Override
+    public String toString() {
+        return "Service{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", tags=" + tags +
+                ", requires=" + requires +
+                ", bindable=" + bindable +
+                ", instancesRetrievable=" + instancesRetrievable +
+                ", bindingsRetrievable=" + bindingsRetrievable +
+                ", allowContextUpdates=" + allowContextUpdates +
+                ", metadata=" + metadata +
+                ", planUpdateable=" + planUpdateable +
+                ", plans=" + plans +
+                '}';
+    }
 }

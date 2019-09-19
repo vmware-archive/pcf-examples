@@ -18,7 +18,7 @@ ext {
 }
 
 dependencies {
-//	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.9'
 //	implementation 'org.springframework.cloud:spring-cloud-starter-open-service-broker:3.0.4.RELEASE'

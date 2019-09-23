@@ -18,30 +18,43 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * If it does not you will receive this error:
 
-    → cf create-service-broker service-broker user pass https://java-service-broker.apps.oldsilver.cf-app.com
+    → cf create-service-broker service-broker user pass https://MY-DOMAIN.com
     Creating service broker service-broker as admin...
-    The service broker rejected the request to https://java-service-broker.apps.oldsilver.cf-app.com/v2/catalog. Status Code: 404 Not Found, Body: {"timestamp":"2019-09-19T14:44:56.961+0000","status":404,"error":"Not Found","message":"No message available","path":"/v2/catalog"}
+    The service broker rejected the request to https://MY-DOMAIN.com/v2/catalog. Status Code: 404 Not Found, Body: {"timestamp":"2019-09-19T14:44:56.961+0000","status":404,"error":"Not Found","message":"No message available","path":"/v2/catalog"}
     FAILED
 
  * When a catalog  exists:
-    → cf create-service-broker service-broker user pass https://java-service-broker.apps.oldsilver.cf-app.com
+
+    → cf create-service-broker service-broker user pass https://MY-DOMAIN.com
     Creating service broker service-broker as admin...
     OK
 
+ * Check the list for it
     → cf service-brokers
     Getting service brokers as admin...
     name             url
-    service-broker   https://java-service-broker.apps.sandytaupe.cf-app.com *
+    service-broker   https://MY-DOMAIN.com *
 
+ * Check the service access
     → cf service-access
     Getting service access as admin...
     broker: service-broker
     service               plan       access   orgs
-    java-service-broker   standard   all
+    java-service-broker   standard   none
 
+ * Enable service access
     → cf enable-service-access java-service-broker
     Enabling access to all plans of service java-service-broker for all orgs as admin...
     OK
+
+ * Ensure it shows up in the marketplace
+    → cf marketplace
+    Getting services from marketplace in org peter / space broker as admin...
+    OK
+
+    service               plans      description                    broker
+    java-service-broker   standard   A simple java-service-broker   service-broker
+
  */
 
 @RestController

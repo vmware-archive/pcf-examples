@@ -9,7 +9,7 @@ import java.util.Map;
 
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ServiceInstance {
+public class ProvisionRequest {
 
     /** ID of the service from the catalog */
     @NotNull
@@ -72,7 +72,7 @@ public class ServiceInstance {
 
     @Override
     public String toString() {
-        return "ServiceInstance{" +
+        return "ProvisionRequest{" +
                 "serviceId='" + serviceId + '\'' +
                 ", planId='" + planId + '\'' +
                 ", organizationGuid='" + organizationGuid + '\'' +

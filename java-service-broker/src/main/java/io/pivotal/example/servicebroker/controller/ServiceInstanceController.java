@@ -1,6 +1,5 @@
 package io.pivotal.example.servicebroker.controller;
 
-import io.pivotal.example.servicebroker.model.ServiceInstance;
 import io.pivotal.example.servicebroker.model.ProvisionResponse;
 import io.pivotal.example.servicebroker.model.ProvisionRequest;
 import org.slf4j.Logger;

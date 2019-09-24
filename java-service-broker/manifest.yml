@@ -1,0 +1,7 @@
+applications:
+  - name: java-service-broker
+    memory: 768M
+    instances: 1
+    buildpacks:
+      - java_buildpack_offline
+    path: build/libs/java-service-broker-0.0.1-SNAPSHOT.jar

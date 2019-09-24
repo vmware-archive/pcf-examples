@@ -55,8 +55,22 @@ import org.springframework.web.bind.annotation.RestController;
     service               plans      description                    broker
     java-service-broker   standard   A simple java-service-broker   service-broker
 
- */
+ * To uninstall
+     → cf disable-service-access java-service-broker
+     Disabling access to all plans of service java-service-broker for all orgs as admin...
+     OK
 
+     → cf delete-service-broker service-broker
+
+     Really delete the service-broker service-broker?> y
+     Deleting service broker service-broker as admin...
+     OK
+
+     → cf d java-service-broker
+      Really delete the app java-service-broker?> y
+     Deleting app java-service-broker in org test / space dev as admin...
+     OK
+ */
 @RestController
 @RequestMapping("/v2/catalog")
 public class CatalogController {

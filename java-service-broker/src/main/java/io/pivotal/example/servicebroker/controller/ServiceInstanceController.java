@@ -56,10 +56,10 @@ public class ServiceInstanceController {
      * Delete / deprovision a service instance
      *
      * https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#deprovisioning
-     → cf delete-service my-jsb
+     → cf delete-service my-java-service-broker
 
-     Really delete the service my-jsb?> y
-     Deleting service my-jsb in org test / space dev as admin...
+     Really delete the service my-java-service-broker?> y
+     Deleting service my-java-service-broker in org test / space dev as admin...
      OK
 
      * @param instanceId
@@ -96,8 +96,8 @@ public class ServiceInstanceController {
      * https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#binding
      *
 
-     → cf bind-service spring-music my-java-service-broker --binding-name my-java-binding
-     Binding service my-java-service-broker to app spring-music with binding name my-java-binding in org test / space dev as admin...
+     → cf bind-service spring-music my-java-service-broker
+     Binding service my-java-service-broker to app spring-music in org test / space dev as admin...
      OK
 
      → cf services

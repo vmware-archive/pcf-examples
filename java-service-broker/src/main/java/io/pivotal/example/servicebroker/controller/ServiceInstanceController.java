@@ -14,6 +14,7 @@ import java.util.UUID;
 
 /**
  * Provision, deprovision, bind and unbind operations.
+ * https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#provisioning
  */
 @RestController
 @RequestMapping("/v2/service_instances")
@@ -53,44 +54,6 @@ public class ServiceInstanceController {
     }
 
     /**
-     * Delete / deprovision a service instance
-     *
-     * https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#deprovisioning
-     → cf delete-service my-java-service-broker
-
-     Really delete the service my-java-service-broker?> y
-     Deleting service my-java-service-broker in org test / space dev as admin...
-     OK
-
-     * @param instanceId
-     * @param serviceId
-     * @param planId
-     * @return
-     */
-    /*
-        TODO: Implement `accepts_incomplete` parameter
-
-        TODO: Implement the other response codes:
-        https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#response-9
-     */
-    @DeleteMapping(value = "/{instance_id}")
-    @ResponseStatus(HttpStatus.OK)
-    public ProvisionResponse deprovision(@PathVariable( "instance_id" ) String instanceId,
-                                         @RequestParam( "service_id" ) String serviceId,
-                                         @RequestParam( "plan_id" ) String planId) {
-        LOG.debug("DEPROVISION: instance=" + instanceId + ", service=" + serviceId + ", plan=" + planId );
-
-        // Deprovision your service
-
-        ProvisionResponse provisionResponse = new ProvisionResponse();
-        provisionResponse.setOperation("my-deprovision-operation");
-
-        LOG.debug(provisionResponse.toString());
-
-        return provisionResponse;
-    }
-
-    /**
      * Bind
      *
      * https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#binding
@@ -105,6 +68,21 @@ public class ServiceInstanceController {
 
      name                     service               plan       bound apps     last operation     broker           upgrade available
      my-java-service-broker   java-service-broker   standard   spring-music   create succeeded   service-broker
+
+     → cf env spring-music
+     Getting env variables for app spring-music in org test / space dev as admin...
+     OK
+
+     System-Provided:
+     {
+     "VCAP_SERVICES": {
+     "java-service-broker": [
+     {
+     "binding_name": null,
+     "credentials": {
+     "password": "d97ae556-8912-4b74-b15e-24aedbf19069",
+     "username": "my_username"
+     ...
 
      * @param instanceId
      * @param bindingId
@@ -184,4 +162,43 @@ public class ServiceInstanceController {
 
         return response;
     }
+
+    /**
+     * Delete / deprovision a service instance
+     *
+     * https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#deprovisioning
+     → cf delete-service my-java-service-broker
+
+     Really delete the service my-java-service-broker?> y
+     Deleting service my-java-service-broker in org test / space dev as admin...
+     OK
+
+     * @param instanceId
+     * @param serviceId
+     * @param planId
+     * @return
+     */
+    /*
+        TODO: Implement `accepts_incomplete` parameter
+
+        TODO: Implement the other response codes:
+        https://github.com/openservicebrokerapi/servicebroker/blob/master/spec.md#response-9
+     */
+    @DeleteMapping(value = "/{instance_id}")
+    @ResponseStatus(HttpStatus.OK)
+    public ProvisionResponse deprovision(@PathVariable( "instance_id" ) String instanceId,
+                                         @RequestParam( "service_id" ) String serviceId,
+                                         @RequestParam( "plan_id" ) String planId) {
+        LOG.debug("DEPROVISION: instance=" + instanceId + ", service=" + serviceId + ", plan=" + planId );
+
+        // Deprovision your service
+
+        ProvisionResponse provisionResponse = new ProvisionResponse();
+        provisionResponse.setOperation("my-deprovision-operation");
+
+        LOG.debug(provisionResponse.toString());
+
+        return provisionResponse;
+    }
+
 }

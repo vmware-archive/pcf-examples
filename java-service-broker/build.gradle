@@ -18,16 +18,9 @@ ext {
 }
 
 dependencies {
-	// cf-java-client  https://github.com/cloudfoundry/cf-java-client
-	compile 'org.cloudfoundry:cloudfoundry-client-reactor:3.15.0.RELEASE'
-	compile 'org.cloudfoundry:cloudfoundry-operations:3.15.0.RELEASE'
-	compile 'io.projectreactor:reactor-core:3.1.8.RELEASE'
-	compile 'io.projectreactor.ipc:reactor-netty:0.7.8.RELEASE'
-
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.9'
-//	implementation 'org.springframework.cloud:spring-cloud-starter-open-service-broker:3.0.4.RELEASE'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 

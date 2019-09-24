@@ -1,7 +1,5 @@
 package io.pivotal.example.servicebroker.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import io.pivotal.example.servicebroker.model.Catalog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +64,7 @@ import org.springframework.web.bind.annotation.RestController;
      Deleting service broker service-broker as admin...
      OK
 
-     → cf d java-service-broker
+     → cf delete java-service-broker
       Really delete the app java-service-broker?> y
      Deleting app java-service-broker in org test / space dev as admin...
      OK

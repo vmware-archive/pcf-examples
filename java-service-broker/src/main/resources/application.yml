@@ -4,9 +4,6 @@ catalog:
       name: java-service-broker
       description: A simple java-service-broker
       bindable: true
-      #      tags:
-      #        - example
-      #        - java
       plans:
         - id: example-plan-id
           name: standard

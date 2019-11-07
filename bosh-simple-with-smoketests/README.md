@@ -1,11 +1,6 @@
 ## bosh-simple-with-smoketests
 
-This adds
-[routingrelease](https://github.com/cloudfoundry-incubator/routing-release)
-to `bosh-simple`. Routing release claims a route in Cloud Foundry. Without this,
-the Spacebars VM is assigned a static, internal IP. By broadcasting this route,
-apps can access the Spacebears service via DNS, and it's also accessible publicly
-through the router.
+This adds smoke tests to `bosh-simple`.
 
 ### Setting up release
 

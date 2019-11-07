@@ -4,7 +4,6 @@ This minimal implementation is intended to be a starting place for service broke
 a base understanding of [Services](https://docs.pivotal.io/pivotalcf/services/index.html)
 and the [Open Service Broker API (OSBAPI)](https://github.com/openservicebrokerapi/servicebroker). See [Services Overview](https://docs.pivotal.io/pivotalcf/services/overview.html) for a graphical representation of the process.  
 
-
 ## Endpoints Implemented
 
 This implementation only provides basic API endpoints for:

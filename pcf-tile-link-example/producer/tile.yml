@@ -1,0 +1,32 @@
+---
+name: producer
+icon_file: resources/icon.jpg
+label: Producer
+description: BOSH link producer
+
+forms:
+- name: required_form
+  label: Form
+  description: Form
+  properties: []
+
+#todo: not required, just didn't feel like uploading a new stemcell to my test environment
+stemcell_criteria:
+  os: ubuntu-xenial
+  requires_cpi: false
+  version: '170.38'
+
+packages:
+- name: producer
+  type: bosh-release
+  path: resources/producer.tgz
+  jobs:
+  - name: producer_node
+    templates:
+    - name: producer_job
+      release: producer-release
+      properties: {}
+      provides:
+        producer:
+          as: producer_link
+          shared: true

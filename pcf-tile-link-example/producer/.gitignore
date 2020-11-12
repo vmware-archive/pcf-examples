@@ -1,0 +1,7 @@
+product/
+release/
+.dev_builds
+dev_releases
+
+resources/*
+!resources/icon.jpg

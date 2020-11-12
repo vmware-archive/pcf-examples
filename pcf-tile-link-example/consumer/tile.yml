@@ -1,0 +1,40 @@
+---
+name: consumer
+icon_file: resources/icon.jpg
+label: Consumer
+description: BOSH link consumer (add-on)
+
+forms:
+- name: required_form
+  label: Form
+  description: Form
+  properties: []
+
+#todo: not required, just didn't feel like uploading a new stemcell to my test environment
+stemcell_criteria:
+  os: ubuntu-xenial
+  requires_cpi: false
+  version: '170.38'
+
+packages:
+- name: consumer
+  type: bosh-release
+  path: resources/consumer.tgz
+
+runtime_configs:
+- name: consumer-runtime-config
+  runtime_config:
+    releases:
+    - name: consumer-release
+      #todo: this needs to be templatized... it's going to bite you in the future
+      #todo: !!!!! https://hakanforss.files.wordpress.com/2014/03/are-you-too-busy-to-improve2.png
+      version: 0+dev.4
+    addons:
+    - name: runtime-test-release
+      jobs:
+      - name: consumer_job
+        release: consumer-release
+        consumes:
+          producer:
+            from: producer_link
+            deployment: (( ..producer.deployment_name))

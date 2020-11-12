@@ -1,0 +1,40 @@
+---
+
+name: producer
+
+releases:
+  - name: producer-release
+    version: latest
+
+stemcells:
+  - alias: bosh-warden-boshlite-ubuntu-xenial-go_agent
+    os: ubuntu-xenial
+    version: latest
+
+update:
+  canaries: 1
+  max_in_flight: 10
+  canary_watch_time: 1000-30000
+  update_watch_time: 1000-30000
+
+instance_groups:
+- name: producer_node
+  instances: 1
+  azs: [z1]
+  jobs:
+    - name: producer_job
+      release: producer-release
+      properties: {}
+      provides:
+        producer:
+          as: producer_link
+          shared: true
+
+  vm_type: minimal
+  cloud_properties:
+    tags:
+      - allow-ssh
+  stemcell: bosh-warden-boshlite-ubuntu-xenial-go_agent
+  persistent_disk_type: 5GB
+  networks:
+    - name: default

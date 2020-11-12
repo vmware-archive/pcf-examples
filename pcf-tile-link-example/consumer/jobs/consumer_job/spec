@@ -1,0 +1,13 @@
+---
+name: consumer_job
+
+templates:
+  consume.erb: consume.txt
+
+packages: []
+
+properties: {}
+
+consumes:
+- name: producer
+  type: producer
